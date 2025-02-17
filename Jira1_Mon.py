@@ -9,8 +9,8 @@ import plotly.express as px  # Biblioteca para criar gráficos
 
 # Login
 def authenticate_user(username, password):
-    return username == "admin" and password == "admin",
-    return username == "henrique.degan" and password == "123456"
+    return username == "admin" and password == "admin"
+    
     
 
 # Função para buscar dados no Jira
