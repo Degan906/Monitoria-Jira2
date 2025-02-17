@@ -9,7 +9,9 @@ import plotly.express as px  # Biblioteca para criar gráficos
 
 # Login
 def authenticate_user(username, password):
-    return username == "admin" and password == "admin"
+    return username == "admin" and password == "admin",
+    return username == "henrique.degan" and password == "123456"
+    
 
 # Função para buscar dados no Jira
 @st.cache_data(ttl=60)  # Cache com tempo de vida de 60 segundos
