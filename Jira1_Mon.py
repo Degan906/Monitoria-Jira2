@@ -258,7 +258,7 @@ else:
     st.markdown(
         f"""
         <div style="position: fixed; bottom: 0; right: 20px; font-size: 12px;">
-            Usuário logado: {st.session_state.email} | Data e Hora: {current_time}
+           ✅ - Desenvolvido por Degan - 🌐 - Versão 1.1  - 🛂 - Usuário logado: {st.session_state.email} | Data e Hora: {current_time}
         </div>
         """,
         unsafe_allow_html=True
