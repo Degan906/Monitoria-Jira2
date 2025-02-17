@@ -11,7 +11,7 @@ def authenticate_user(username, password):
     return username == "admin" and password == "admin"
 
 # Função para buscar dados no Jira
-#@st.cache_data 
+@st.cache_data(ttl=60)  # Cache com tempo de vida de 60 segundos
 def buscar_jira(jira_url, email, api_token, jql, max_results=100):
     headers = {
         "Accept": "application/json"
