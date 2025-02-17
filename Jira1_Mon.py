@@ -1,4 +1,5 @@
-#V2
+# V3 - 17/02/2025 - Degan
+# Ateradas linha de login 
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
@@ -7,11 +8,13 @@ import time
 import pytz
 import plotly.express as px  # Biblioteca para criar gráficos
 
-# Login
-def authenticate_user(username, password):
-    return username == "admin" and password == "admin"
-    
-    
+# Dicionário de usuários e senhas
+USERS = {
+    "admin": "admin",
+    "henrique.degan": "12345",
+    "user2": "password2",
+    "user3": "password3"
+}
 
 # Função para buscar dados no Jira
 @st.cache_data(ttl=60)  # Cache com tempo de vida de 60 segundos
@@ -52,6 +55,10 @@ if not st.session_state.authenticated:
     )
     username = st.text_input("Usuário")
     password = st.text_input("Senha", type="password")
+    # Função de autenticação (corrigida)
+    def authenticate_user(username, password):
+        return USERS.get(username) == password
+
     if st.button("Entrar"):
         if authenticate_user(username, password):
             st.session_state.authenticated = True
