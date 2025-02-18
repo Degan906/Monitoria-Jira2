@@ -1,12 +1,12 @@
-# V3 - 17/02/2025 - Degan
-# Ateradas linha de login 
+# V4 - 18/02/2025 - Degan 
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
 from datetime import datetime
 import time
 import pytz
-import plotly.express as px  # Biblioteca para criar gráficos
+import pandas as pd
+import plotly.express as px
 
 # Dicionário de usuários e senhas
 USERS = {
@@ -74,17 +74,12 @@ else:
 
     # Menu lateral
     st.sidebar.title("Menu")
-    menu_option = st.sidebar.selectbox("Escolha uma opção:", ["Dash de monitoria", "Fila de atendimento"])
+    menu_option = st.sidebar.selectbox("Escolha uma opção:", ["Dash de monitoria", "Dashs Gestão","Relatorio Geral ITSM"])
 
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")  # Título para a seção de dashboard
 
-        # Botão de atualização de dados
-        if st.button("Atualizar Dados"):
-            st.cache_data.clear()  # Limpa o cache para forçar a busca de novos dados
-            st.rerun()  # Recarrega a página
-
-        # Definir a JQL
+        # Definir a JQL (movido para antes do uso)
         queries = {
             "🤖 AUTOMAÇÕES AP 🤖": {
                 "AP-Sem link de DOC": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01',
@@ -113,6 +108,79 @@ else:
                 "Vidro EXPORT" : 'project = VIDRO AND type = Vidro AND "blindagem[short text]" ~ "EXPORT" and labels  != 🟢EXPORT',
             },
         }
+
+        
+        # Botão de atualização de dados
+        if st.button("Atualizar Dados"):
+            st.cache_data.clear()  # Limpa o cache para forçar a busca de novos dados
+            st.rerun()  # Recarrega a página
+
+        # Botão para exibir issues alarmadas
+        if st.button("Exibir Issues Alarmadas"):
+            st.session_state.show_alarmed_issues = True  # Ativar a exibição da tabela
+
+        # Verificar se o botão foi clicado e exibir a tabela
+        if st.session_state.get('show_alarmed_issues', False):
+            st.subheader("Issues Alarmadas")
+
+            # Buscar todas as issues alarmadas
+            alarmed_issues = []
+            for query_name, jql in queries["🤖 AUTOMAÇÕES AP 🤖"].items():
+                response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
+                if response.status_code == 200:
+                    data = response.json()
+                    issues = data.get('issues', [])
+                    if issues:
+                        for issue in issues:
+                            fields = issue.get('fields', {})
+                            chave = f"{st.session_state.jira_url}/browse/{issue['key']}"
+                            tipo = fields.get('issuetype', {}).get('name', 'N/A')
+                            resumo = fields.get('summary', 'N/A')
+                            criado = datetime.strptime(fields.get('created', ''), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo'))
+                            relator = fields.get('reporter', {}).get('displayName', 'N/A')
+                            responsavel = fields.get('assignee', {}).get('displayName', 'N/A') if fields.get('assignee') else 'Não atribuído'
+                            status = fields.get('status', {}).get('name', 'N/A')
+                            resolucao = fields.get('resolution', {}).get('name', 'N/A') if fields.get('resolution') else 'N/A'
+
+                            alarmed_issues.append({
+                                "Chave": chave,
+                                "Tipo": tipo,
+                                "Resumo": resumo,
+                                "Criado": criado,
+                                "Relator": relator,
+                                "Responsável": responsavel,
+                                "Status": status,
+                                "Resolução": resolucao
+                            })
+
+            # Exibir a tabela de issues alarmadas
+            if alarmed_issues:
+                df_alarmed = pd.DataFrame(alarmed_issues)
+                st.data_editor(
+                    df_alarmed,
+                    column_config={
+                        "Chave": st.column_config.LinkColumn("Chave"),  # Transforma a coluna Chave em um link clicável
+                        "Criado": st.column_config.DatetimeColumn("Criado", format="DD/MM/YY HH:mm"),
+                    },
+                    hide_index=True,
+                    use_container_width=True,
+                    num_rows="dynamic",
+                    disabled=True,
+                    column_order=["Chave", "Tipo", "Resumo", "Criado", "Relator", "Responsável", "Status", "Resolução"]
+                )
+
+                # Reproduzir som de alarme usando JavaScript
+                st.markdown(
+                    """
+                    <audio autoplay>
+                        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mp3">
+                        Seu navegador não suporta o elemento de áudio.
+                    </audio>
+                    """,
+                    unsafe_allow_html=True
+                )
+            else:
+                st.info("Nenhuma issue alarmada encontrada.")
 
         # Espaço reservado para os resultados
         results_placeholder = st.empty()
@@ -183,85 +251,153 @@ else:
         time.sleep(60)
         st.rerun()
 
-    elif menu_option == "Fila de atendimento":
-        st.title("Fila de Atendimento")
+# Inicio dos Dashs de Gestão    
+    elif menu_option == "Dashs Gestão":
+        st.title("Dashs Gestão")
+        st.warning("🚧 Esta seção está em construção! 🚧")
+        st.info("Estamos trabalhando para trazer novidades. Aguarde!")
+# Termino dos Dashs de Gestao
+    elif menu_option == "Relatorio Geral ITSM":
+        st.title("Relatorio Geral ITSM")
 
-        # JQL para buscar issues criadas e resolvidas neste mês
-        jql_created = 'created >= startOfMonth() AND project = JSM AND created <= endOfMonth() ORDER BY created DESC'
-        jql_resolved = 'resolutiondate >= startOfMonth() AND project = JSM AND resolutiondate <= endOfMonth() ORDER BY resolutiondate DESC'
+        # JQL para buscar issues ordenadas pela data de criação
+        jql_fila = 'project = JSM ORDER BY created DESC'
 
-        # Buscar issues criadas
-        response_created = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_created)
-        if response_created.status_code == 200:
-            data_created = response_created.json()
-            total_created = data_created.get('total', 0)
-            issues_created = data_created.get('issues', [])
+        response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_fila)
+        if response.status_code == 200:
+            data = response.json()
+            issues = data.get('issues', [])
+
+            if issues:
+                table_data = []
+                for issue in issues:
+                    fields = issue.get('fields', {})
+                    chave = f"[{issue['key']}]({st.session_state.jira_url}/browse/{issue['key']})"
+                    tipo = fields.get('issuetype', {}).get('name', 'N/A')
+                    resumo = fields.get('summary', 'N/A')
+
+                    # Converter Criado para datetime
+                    criado = datetime.strptime(issue['fields']['created'], "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo'))
+
+                    relator = fields.get('reporter', {}).get('displayName', 'N/A')
+                    responsavel = fields.get('assignee', {}).get('displayName', 'N/A') if fields.get('assignee') else 'Não atribuído'
+
+                    # Converter Resolvido para datetime ou usar None se vazio
+                    resolvido = datetime.strptime(fields.get('resolutiondate', '1970-01-01T00:00:00.000+0000'), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo')) if fields.get('resolutiondate') else None
+
+                    status = fields.get('status', {}).get('name', 'N/A')  # Campo Status
+                    resolucao = fields.get('resolution', {}).get('name', 'N/A') if fields.get('resolution') else 'N/A'
+
+                    table_data.append({
+                        "Chave": chave,
+                        "Tipo": tipo,
+                        "Resumo": resumo,
+                        "Criado": criado,
+                        "Relator": relator,
+                        "Responsável": responsavel,
+                        "Resolvido": resolvido,
+                        "Status": status,
+                        "Resolução": resolucao
+                    })
+
+                # Converter para DataFrame
+                df = pd.DataFrame(table_data)
+
+                # Configurar as colunas para filtros interativos
+                st.data_editor(
+                    df,
+                    column_config={
+                        "Chave": st.column_config.LinkColumn("Chave"),  # Transforma a coluna Chave em um link clicável
+                        "Criado": st.column_config.DatetimeColumn("Criado", format="DD/MM/YY HH:mm"),
+                        "Resolvido": st.column_config.DatetimeColumn("Resolvido", format="DD/MM/YY HH:mm"),
+                    },
+                    hide_index=True,
+                    use_container_width=True,  # Torna a tabela responsiva
+                    num_rows="dynamic",  # Permite paginação e filtros
+                    disabled=True,  # Desabilita edição dos dados
+                    column_order=["Chave", "Tipo", "Resumo", "Criado", "Relator", "Responsável", "Resolvido", "Status", "Resolução"]
+                )
+            else:
+                st.info("Nenhuma issue encontrada.")
         else:
-            st.error(f"Erro ao buscar issues criadas: {response_created.status_code} - {response_created.text}")
-            total_created = 0
-            issues_created = []
+            st.error(f"Erro ao buscar dados do Jira: {response.status_code} - {response.text}")
 
-        # Buscar issues resolvidas
-        response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_resolved)
-        if response_resolved.status_code == 200:
-            data_resolved = response_resolved.json()
-            total_resolved = data_resolved.get('total', 0)
-        else:
-            st.error(f"Erro ao buscar issues resolvidas: {response_resolved.status_code} - {response_resolved.text}")
-            total_resolved = 0
+            # JQL para buscar issues criadas e resolvidas neste mês
+            jql_created = 'created >= startOfMonth() AND project = JSM AND created <= endOfMonth() ORDER BY created DESC'
+            jql_resolved = 'resolutiondate >= startOfMonth() AND project = JSM AND resolutiondate <= endOfMonth() ORDER BY resolutiondate DESC'
 
-        # Criar gráfico de pizza
-        labels = ['Criadas', 'Resolvidas']
-        values = [total_created, total_resolved]
+            # Buscar issues criadas
+            response_created = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_created)
+            if response_created.status_code == 200:
+                data_created = response_created.json()
+                total_created = data_created.get('total', 0)
+                issues_created = data_created.get('issues', [])
+            else:
+                st.error(f"Erro ao buscar issues criadas: {response_created.status_code} - {response_created.text}")
+                total_created = 0
+                issues_created = []
 
-        fig_pie = px.pie(
-            names=labels,
-            values=values,
-            title="Issues Criadas vs Resolvidas no Mês",
-            color_discrete_sequence=px.colors.qualitative.Pastel
-        )
+            # Buscar issues resolvidas
+            response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_resolved)
+            if response_resolved.status_code == 200:
+                data_resolved = response_resolved.json()
+                total_resolved = data_resolved.get('total', 0)
+            else:
+                st.error(f"Erro ao buscar issues resolvidas: {response_resolved.status_code} - {response_resolved.text}")
+                total_resolved = 0
 
-        # Exibir o gráfico de pizza
-        st.plotly_chart(fig_pie)
+            # Criar gráfico de pizza
+            labels = ['Criadas', 'Resolvidas']
+            values = [total_created, total_resolved]
 
-        # Gráfico de barras por assignee
-        if issues_created:
-            # Contar issues por assignee
-            assignee_count = {}
-            for issue in issues_created:
-                # Verificar se o campo 'assignee' existe e não é None
-                assignee = issue['fields'].get('assignee')
-                if assignee:  # Se o assignee existir
-                    assignee_name = assignee.get('displayName', 'Não Atribuído')
-                else:  # Se o assignee for None
-                    assignee_name = 'Não Atribuído'
-
-                # Contar issues por assignee
-                if assignee_name in assignee_count:
-                    assignee_count[assignee_name] += 1
-                else:
-                    assignee_count[assignee_name] = 1
-
-            # Preparar dados para o gráfico de barras
-            assignees = list(assignee_count.keys())
-            counts = list(assignee_count.values())
-
-            # Criar gráfico de barras
-            fig_bar = px.bar(
-                x=assignees,
-                y=counts,
-                labels={'x': 'Assignee', 'y': 'Número de Issues'},
-                title="Issues por Assignee no Mês",
-                text=counts,
-                color=assignees,
+            fig_pie = px.pie(
+                names=labels,
+                values=values,
+                title="Issues Criadas vs Resolvidas no Mês",
                 color_discrete_sequence=px.colors.qualitative.Pastel
             )
-            fig_bar.update_traces(textposition='outside')  # Posicionar os números acima das barras
 
-            # Exibir o gráfico de barras
-            st.plotly_chart(fig_bar)
-        else:
-            st.warning("Nenhuma issue criada encontrada para exibir o gráfico de assignees.")
+            # Exibir o gráfico de pizza
+            st.plotly_chart(fig_pie)
+
+            # Gráfico de barras por assignee
+            if issues_created:
+                # Contar issues por assignee
+                assignee_count = {}
+                for issue in issues_created:
+                    # Verificar se o campo 'assignee' existe e não é None
+                    assignee = issue['fields'].get('assignee')
+                    if assignee:  # Se o assignee existir
+                        assignee_name = assignee.get('displayName', 'Não Atribuído')
+                    else:  # Se o assignee for None
+                        assignee_name = 'Não Atribuído'
+
+                    # Contar issues por assignee
+                    if assignee_name in assignee_count:
+                        assignee_count[assignee_name] += 1
+                    else:
+                        assignee_count[assignee_name] = 1
+
+                # Preparar dados para o gráfico de barras
+                assignees = list(assignee_count.keys())
+                counts = list(assignee_count.values())
+
+                # Criar gráfico de barras
+                fig_bar = px.bar(
+                    x=assignees,
+                    y=counts,
+                    labels={'x': 'Assignee', 'y': 'Número de Issues'},
+                    title="Issues por Assignee no Mês",
+                    text=counts,
+                    color=assignees,
+                    color_discrete_sequence=px.colors.qualitative.Pastel
+                )
+                fig_bar.update_traces(textposition='outside')  # Posicionar os números acima das barras
+
+                # Exibir o gráfico de barras
+                st.plotly_chart(fig_bar)
+            else:
+                st.warning("Nenhuma issue criada encontrada para exibir o gráfico de assignees.")
 
     # Exibir a data e hora atual no rodapé
     current_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
