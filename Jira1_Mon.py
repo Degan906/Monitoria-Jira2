@@ -1,5 +1,4 @@
 # V4.1 - 11/03/2025 - Degan 
-
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
@@ -8,6 +7,9 @@ import time
 import pytz
 import pandas as pd
 import plotly.express as px
+
+# Configurar o layout para usar toda a largura
+st.set_page_config(layout="wide")
 
 # Dicionário de usuários e senhas
 USERS = {
@@ -56,6 +58,7 @@ if not st.session_state.authenticated:
     )
     username = st.text_input("Usuário")
     password = st.text_input("Senha", type="password")
+
     # Função de autenticação (corrigida)
     def authenticate_user(username, password):
         return USERS.get(username) == password
@@ -75,7 +78,7 @@ else:
 
     # Menu lateral
     st.sidebar.title("Menu")
-    menu_option = st.sidebar.selectbox("Escolha uma opção:", ["Dash de monitoria", "Dashs Gestão","Relatorio Geral ITSM"])
+    menu_option = st.sidebar.selectbox("Escolha uma opção:", ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM"])
 
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")  # Título para a seção de dashboard
@@ -103,16 +106,16 @@ else:
                 "PB - Sem/Veiculo Marca/Modelo ": 'filter in ("10549") AND created >= 2023-07-01 AND project in (PB, AP) AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
                 "AP/PB/VAM - Sem Veiculo ": 'filter in ("10549") AND (filter in ("10549") AND project in (VIDRO, MANTA, ACO, "SUPORTE VIDRO", "CONJUNTO AÇO DO VIDRO") AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND created >= -120d AND summary !~ RNC AND summary !~ AVULSA AND status not in (Cancelado) AND statusCategory != Done AND "Tipo Card[Select List (cascading)]" = "NÃO RNC" OR project in (AP, PB, VL) AND "veiculo - marca/modelo[short text]" is EMPTY AND resolution = Unresolved)',
                 "Pós Venda - Veiculos - Marca/Modelo": 'filter in ("10549") AND project = PV AND issuetype in ("[System] Incident", "Sub-Task - Eletrônica", "Sub-Task - Estética", "Sub-Task - Montagem") AND created >= 2023-08-25 AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
-                "PBV - Volvo sem Tork's" : 'project = PBV AND resolution = Done AND "marca[short text]" ~ "VOLVO" AND "modelo[short text]" !~ "EX30 SUV" AND "Modelo[Short text]" !~ "C40 COUPE" AND "Torque Vidro[Radio Buttons]" IS EMPTY ORDER BY created DESC',
-                "PB - Instalando Vidro erro" : 'project = "Produção Blindados" AND status = "Instalando Vidro"  AND issueLinkType = "PB > VF" AND issueLinkType = "PB > VM" AND resolution = "Done" ORDER BY created DESC',
-                "Peças sem Marca/Veiculo" : 'project = SUPPLY AND type = "Supply Chain" AND "Request Type (Custom)[Short text]" ~ "Peças Produção" and "Marca[Short text]" IS EMPTY',
-                "Vidro EXPORT" : 'project = VIDRO AND type = Vidro AND "blindagem[short text]" ~ "EXPORT" and labels  != 🟢EXPORT',
+                "PBV - Volvo sem Tork's": 'project = PBV AND resolution = Done AND "marca[short text]" ~ "VOLVO" AND "modelo[short text]" !~ "EX30 SUV" AND "Modelo[Short text]" !~ "C40 COUPE" AND "Torque Vidro[Radio Buttons]" IS EMPTY ORDER BY created DESC',
+                "PB - Instalando Vidro erro": 'project = "Produção Blindados" AND status = "Instalando Vidro"  AND issueLinkType = "PB > VF" AND issueLinkType = "PB > VM" AND resolution = "Done" ORDER BY created DESC',
+                "Peças sem Marca/Veiculo": 'project = SUPPLY AND type = "Supply Chain" AND "Request Type (Custom)[Short text]" ~ "Peças Produção" and "Marca[Short text]" IS EMPTY',
+                "Vidro EXPORT": 'project = VIDRO AND type = Vidro AND "blindagem[short text]" ~ "EXPORT" and labels  != 🟢EXPORT',
             },
         }
 
         # Criar duas colunas para os botões
         col1, col2 = st.columns(2)
-        
+
         # Botão de atualização de dados na primeira coluna
         with col1:
             if st.button("Atualizar Dados"):
@@ -127,7 +130,6 @@ else:
         # Verificar se o botão foi clicado e exibir a tabela
         if st.session_state.get('show_alarmed_issues', False):
             st.subheader("Issues Alarmadas")
-
             # Buscar todas as issues alarmadas
             alarmed_issues = []
             for query_name, jql in queries["🤖 AUTOMAÇÕES AP 🤖"].items():
@@ -146,7 +148,6 @@ else:
                             responsavel = fields.get('assignee', {}).get('displayName', 'N/A') if fields.get('assignee') else 'Não atribuído'
                             status = fields.get('status', {}).get('name', 'N/A')
                             resolucao = fields.get('resolution', {}).get('name', 'N/A') if fields.get('resolution') else 'N/A'
-
                             alarmed_issues.append({
                                 "Chave": chave,
                                 "Tipo": tipo,
@@ -157,7 +158,6 @@ else:
                                 "Status": status,
                                 "Resolução": resolucao
                             })
-
             # Exibir a tabela de issues alarmadas
             if alarmed_issues:
                 df_alarmed = pd.DataFrame(alarmed_issues)
@@ -173,7 +173,6 @@ else:
                     disabled=True,
                     column_order=["Chave", "Tipo", "Resumo", "Criado", "Relator", "Responsável", "Status", "Resolução"]
                 )
-
                 # Reproduzir som de alarme usando JavaScript
                 st.markdown(
                     """
@@ -205,7 +204,10 @@ else:
         )
 
         # Max de 6 colunas
-        cols = results_placeholder.columns(min(len(queries["🤖 AUTOMAÇÕES AP 🤖"]), 6))  # Max de 6 colunas
+        max_columns = 6  # Máximo de colunas
+        num_columns = min(len(queries["🤖 AUTOMAÇÕES AP 🤖"]), max_columns)
+        cols = results_placeholder.columns(num_columns)  # Max de 6 colunas
+
         # Limpar conteúdo anterior
         for col in cols:
             col.empty()
@@ -218,12 +220,12 @@ else:
                 issue_count = data.get('total', 0)  # Obter o número total de issues
 
                 # Exibir o card inicial
-                with cols[i % 6]:  # Distribuir os cards nas 6 colunas disponíveis
+                with cols[i % num_columns]:  # Distribuir os cards nas colunas disponíveis
                     if issue_count > 0:
                         # Exibir GIF e fundo amarelo quando a quantidade for maior que 0
                         st.markdown(
                             f"""
-                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 150px; height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffff99;">
+                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffff99;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
@@ -236,7 +238,7 @@ else:
                         # Exibir card sem GIF e com fundo branco quando a quantidade for 0
                         st.markdown(
                             f"""
-                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 150px; height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
+                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
@@ -249,30 +251,25 @@ else:
 
         # Atualizar a última data de atualização
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
-
         st.write("Aqui estão os dados do dashboard de monitoria...")  # Conteúdo adicional do dashboard
 
         # Aguardar 60 segundos antes da próxima atualização
         time.sleep(60)
         st.rerun()
 
-# Inicio dos Dashs de Gestão    
     elif menu_option == "Dashs Gestão":
         st.title("Dashs Gestão")
         st.warning("🚧 Esta seção está em construção! 🚧")
         st.info("Estamos trabalhando para trazer novidades. Aguarde!")
-# Termino dos Dashs de Gestao
+
     elif menu_option == "Relatorio Geral ITSM":
         st.title("Relatorio Geral ITSM")
-
         # JQL para buscar issues ordenadas pela data de criação
         jql_fila = 'project = JSM ORDER BY created DESC'
-
         response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_fila)
         if response.status_code == 200:
             data = response.json()
             issues = data.get('issues', [])
-
             if issues:
                 table_data = []
                 for issue in issues:
@@ -280,19 +277,14 @@ else:
                     chave = f"[{issue['key']}]({st.session_state.jira_url}/browse/{issue['key']})"
                     tipo = fields.get('issuetype', {}).get('name', 'N/A')
                     resumo = fields.get('summary', 'N/A')
-
                     # Converter Criado para datetime
                     criado = datetime.strptime(issue['fields']['created'], "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo'))
-
                     relator = fields.get('reporter', {}).get('displayName', 'N/A')
                     responsavel = fields.get('assignee', {}).get('displayName', 'N/A') if fields.get('assignee') else 'Não atribuído'
-
                     # Converter Resolvido para datetime ou usar None se vazio
                     resolvido = datetime.strptime(fields.get('resolutiondate', '1970-01-01T00:00:00.000+0000'), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo')) if fields.get('resolutiondate') else None
-
                     status = fields.get('status', {}).get('name', 'N/A')  # Campo Status
                     resolucao = fields.get('resolution', {}).get('name', 'N/A') if fields.get('resolution') else 'N/A'
-
                     table_data.append({
                         "Chave": chave,
                         "Tipo": tipo,
@@ -304,10 +296,8 @@ else:
                         "Status": status,
                         "Resolução": resolucao
                     })
-
                 # Converter para DataFrame
                 df = pd.DataFrame(table_data)
-
                 # Configurar as colunas para filtros interativos
                 st.data_editor(
                     df,
@@ -326,11 +316,9 @@ else:
                 st.info("Nenhuma issue encontrada.")
         else:
             st.error(f"Erro ao buscar dados do Jira: {response.status_code} - {response.text}")
-
             # JQL para buscar issues criadas e resolvidas neste mês
             jql_created = 'created >= startOfMonth() AND project = JSM AND created <= endOfMonth() ORDER BY created DESC'
             jql_resolved = 'resolutiondate >= startOfMonth() AND project = JSM AND resolutiondate <= endOfMonth() ORDER BY resolutiondate DESC'
-
             # Buscar issues criadas
             response_created = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_created)
             if response_created.status_code == 200:
@@ -354,16 +342,14 @@ else:
             # Criar gráfico de pizza
             labels = ['Criadas', 'Resolvidas']
             values = [total_created, total_resolved]
-
             fig_pie = px.pie(
                 names=labels,
                 values=values,
                 title="Issues Criadas vs Resolvidas no Mês",
                 color_discrete_sequence=px.colors.qualitative.Pastel
             )
-
             # Exibir o gráfico de pizza
-            st.plotly_chart(fig_pie)
+            st.plotly_chart(fig_pie, use_container_width=True)
 
             # Gráfico de barras por assignee
             if issues_created:
@@ -376,7 +362,6 @@ else:
                         assignee_name = assignee.get('displayName', 'Não Atribuído')
                     else:  # Se o assignee for None
                         assignee_name = 'Não Atribuído'
-
                     # Contar issues por assignee
                     if assignee_name in assignee_count:
                         assignee_count[assignee_name] += 1
@@ -400,7 +385,7 @@ else:
                 fig_bar.update_traces(textposition='outside')  # Posicionar os números acima das barras
 
                 # Exibir o gráfico de barras
-                st.plotly_chart(fig_bar)
+                st.plotly_chart(fig_bar, use_container_width=True)
             else:
                 st.warning("Nenhuma issue criada encontrada para exibir o gráfico de assignees.")
 
