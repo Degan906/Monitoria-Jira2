@@ -110,15 +110,19 @@ else:
             },
         }
 
+        # Criar duas colunas para os botões
+        col1, col2 = st.columns(2)
         
-        # Botão de atualização de dados
-        if st.button("Atualizar Dados"):
-            st.cache_data.clear()  # Limpa o cache para forçar a busca de novos dados
-            st.rerun()  # Recarrega a página
+        # Botão de atualização de dados na primeira coluna
+        with col1:
+            if st.button("Atualizar Dados"):
+                st.cache_data.clear()  # Limpa o cache para forçar a busca de novos dados
+                st.rerun()  # Recarrega a página
 
-        # Botão para exibir issues alarmadas
-        if st.button("Exibir Issues Alarmadas"):
-            st.session_state.show_alarmed_issues = True  # Ativar a exibição da tabela
+        # Botão para exibir issues alarmadas na segunda coluna
+        with col2:
+            if st.button("Exibir Issues Alarmadas"):
+                st.session_state.show_alarmed_issues = True  # Ativar a exibição da tabela
 
         # Verificar se o botão foi clicado e exibir a tabela
         if st.session_state.get('show_alarmed_issues', False):
