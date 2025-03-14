@@ -1,4 +1,4 @@
-# V4.1 - 11/03/2025 - Degan 
+# V4.1 - 11/03/2025 - Degan
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
@@ -7,7 +7,6 @@ import time
 import pytz
 import pandas as pd
 import plotly.express as px
-
 
 # Configuração da página
 st.set_page_config(page_title="Monitoria", layout="wide")
@@ -79,7 +78,10 @@ else:
 
     # Menu lateral
     st.sidebar.title("Menu")
-    menu_option = st.sidebar.selectbox("Escolha uma opção:", ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM"])
+    menu_option = st.sidebar.selectbox(
+        "Escolha uma opção:",
+        ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM", "User List"]
+    )
 
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")  # Título para a seção de dashboard
@@ -389,6 +391,15 @@ else:
                 st.plotly_chart(fig_bar, use_container_width=True)
             else:
                 st.warning("Nenhuma issue criada encontrada para exibir o gráfico de assignees.")
+
+    elif menu_option == "User List":
+        # Importar e executar o código do arquivo import_user_jira.py
+        from import_user_jira import main
+        main(
+            jira_url=st.session_state.jira_url,
+            email=st.session_state.email,
+            api_token=st.session_state.api_token
+        )
 
     # Exibir a data e hora atual no rodapé
     current_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
