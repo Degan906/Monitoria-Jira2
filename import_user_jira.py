@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 # Configuração da página
-st.set_page_config(page_title="Users Jira", layout="wide")
+#st.set_page_config(page_title="Users Jira", layout="wide")
 
 # Título da aplicação
 st.title("Users Jira")
