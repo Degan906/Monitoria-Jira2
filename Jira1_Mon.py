@@ -8,8 +8,9 @@ import pytz
 import pandas as pd
 import plotly.express as px
 
-# Configurar o layout para usar toda a largura
-st.set_page_config(layout="wide")
+
+# Configuração da página
+st.set_page_config(page_title="Monitoria", layout="wide")
 
 # Dicionário de usuários e senhas
 USERS = {
