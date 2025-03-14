@@ -7,6 +7,7 @@ import time
 import pytz
 import pandas as pd
 import plotly.express as px
+from import_user_jira import mostrar_lista_usuarios # Adicione esta linha no início do seu código principal
 
 
 # Configuração da página
@@ -79,7 +80,7 @@ else:
 
     # Menu lateral
     st.sidebar.title("Menu")
-    menu_option = st.sidebar.selectbox("Escolha uma opção:", ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM"])
+    menu_option = st.sidebar.selectbox("Escolha uma opção:", ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM","User List"])
 
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")  # Título para a seção de dashboard
