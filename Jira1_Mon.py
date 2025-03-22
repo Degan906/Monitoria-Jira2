@@ -96,24 +96,20 @@ else:
                 "AP-Sem link de SVIDRO": 'project = AP AND issuetype = Recebimento AND status != Cancelado AND issueLinkType not in ("P-Suporte Vidro") AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "AP-Sem link de PB": 'project = AP AND issuetype = Recebimento AND status = "Produção PB" AND issueLinkType not in ("PB - Produção Blindados") AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "AP - Ag.Ent-Data Exército preenchida": 'project = AP and issuetype = Recebimento and status = "Aguardando entrada" and "Data de Liberação do Exército[Date]" is not empty and summary !~ TESTE',
-                "PB-Sem link de VL": 'project = PB AND status was "Definir Técnico Montagem" and issueLinkType not in (VAL) and created >= startOfYear(-1)',
-                "PB-Ag. Limpeza QA1": 'project = PB and status = "135 - Aguardando Limpeza QA1" and type = "Produção Blindados"',
-                "PB-Parado em Ag. Exército": 'project = PB and status = "130 - Aguardando Exército" and "JSW_P-Validação (TM) - Done" is not empty',
-                "PB-Parado em Exército Concluído": 'project = PB and status = "131 - Exército Concluído"',
-                "PB-Veículo Finalizado sem Validação": 'filter in ("10983") AND project = PB AND "Veiculo Finalizado na Produção" is not EMPTY AND "12 - Aguardando Validações" is EMPTY',
-                "PB-Passou-131-Exército/TM/aberto": 'project = PB AND status changed to "131 - Exército Concluído" after startOfYear() and "JSW_P-Validação (TM) - Done" is empty',
-                "PB-DT.CONTRATO vazia": 'filter in ("10983") AND type in ("Produção Blindados", "Produção Blindados - QA") AND DT.CONTRATO is EMPTY AND status != Cancelado',
-                "PB-6.3-Finalizar Toyota": 'filter in ("10549") AND issuetype = "Produção Blindados" AND status = "6.3 - Finalizar Toyota" AND "Tag Toyota" = TOYOTA',
-                "Compras sem Supply": 'filter in ("10549") AND project = COM AND created >= 2023-07-01 AND issueLinkType = EMPTY',
-                "Monitoria de processo Incidentes": 'filter in ("10549") AND project = SJM AND issuetype = "[System] Incident" AND labels = ⚠️MONITORIA⚠️ AND resolution = Unresolved and status = "Aguardando Atendimento"',
-                "PB - Sem/Veiculo Marca/Modelo ": 'filter in ("10549") AND created >= 2023-07-01 AND project in (PB, AP) AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
-                "AP/PB/VAM - Sem Veiculo ": 'filter in ("10549") AND (filter in ("10549") AND project in (VIDRO, MANTA, ACO, "SUPORTE VIDRO", "CONJUNTO AÇO DO VIDRO") AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND created >= -120d AND summary !~ RNC AND summary !~ AVULSA AND status not in (Cancelado) AND statusCategory != Done AND "Tipo Card[Select List (cascading)]" = "NÃO RNC" OR project in (AP, PB, VL) AND "veiculo - marca/modelo[short text]" is EMPTY AND resolution = Unresolved)',
-                "Pós Venda - Veiculos - Marca/Modelo": 'filter in ("10549") AND project = PV AND issuetype in ("[System] Incident", "Sub-Task - Eletrônica", "Sub-Task - Estética", "Sub-Task - Montagem") AND created >= 2023-08-25 AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
-                "PBV - Volvo sem Tork's": 'project = PBV AND resolution = Done AND "marca[short text]" ~ "VOLVO" AND "modelo[short text]" !~ "EX30 SUV" AND "Modelo[Short text]" !~ "C40 COUPE" AND "Torque Vidro[Radio Buttons]" IS EMPTY ORDER BY created DESC',
-                "PB - Instalando Vidro erro": 'project = "Produção Blindados" AND status = "Instalando Vidro"  AND issueLinkType = "PB > VF" AND issueLinkType = "PB > VM" AND resolution = "Done" ORDER BY created DESC',
-                "Peças sem Marca/Veiculo": 'project = SUPPLY AND type = "Supply Chain" AND "Request Type (Custom)[Short text]" ~ "Peças Produção" and "Marca[Short text]" IS EMPTY',
-                "Vidro EXPORT": 'project = VIDRO AND type = Vidro AND "blindagem[short text]" ~ "EXPORT" and labels  != 🟢EXPORT',
+                # Adicione mais queries aqui...
             },
+        }
+
+        # Dicionário de descrições para cada query
+        query_descriptions = {
+            "AP-Sem link de DOC": "Indica que o Projeto Apontamento está sem o link de Documentação.",
+            "AP-Sem link de VIDRO": "Indica que o Projeto Apontamento está sem o link de Vidro.",
+            "AP-Sem Link de AÇO": "Indica que o Projeto Apontamento está sem o link de Aço.",
+            "AP-Sem link de MANTA": "Indica que o Projeto Apontamento está sem o link de Manta.",
+            "AP-Sem link de SVIDRO": "Indica que o Projeto Apontamento está sem o link de Suporte Vidro.",
+            "AP-Sem link de PB": "Indica que o Projeto Apontamento está sem o link de Produção Blindados.",
+            "AP - Ag.Ent-Data Exército preenchida": "Indica que a Data de Liberação do Exército foi preenchida para entradas aguardando entrada.",
+            # Adicione descrições para os outros cards aqui...
         }
 
         # Criar duas colunas para os botões
@@ -211,10 +207,6 @@ else:
         num_columns = min(len(queries["🤖 AUTOMAÇÕES AP 🤖"]), max_columns)
         cols = results_placeholder.columns(num_columns)  # Max de 6 colunas
 
-        # Limpar conteúdo anterior
-        for col in cols:
-            col.empty()
-
         # Renderizar todos os cards primeiro
         for i, (query_name, jql) in enumerate(queries["🤖 AUTOMAÇÕES AP 🤖"].items()):
             response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
@@ -222,17 +214,19 @@ else:
                 data = response.json()
                 issue_count = data.get('total', 0)  # Obter o número total de issues
 
-                # Exibir o card inicial
+                # Criar um tooltip para cada card
+                description = query_descriptions.get(query_name, "Descrição não disponível.")
                 with cols[i % num_columns]:  # Distribuir os cards nas colunas disponíveis
                     if issue_count > 0:
                         # Exibir GIF e fundo amarelo quando a quantidade for maior que 0
                         st.markdown(
                             f"""
-                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffff99;">
+                            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffff99; position: relative;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
                                 <img src="https://em-content.zobj.net/source/animated-noto-color-emoji/356/police-car-light_1f6a8.gif" width="50" height="50" style="margin-top: 5px;">
+                                <span class="tooltiptext">{description}</span>
                             </div>
                             """,
                             unsafe_allow_html=True
@@ -241,16 +235,62 @@ else:
                         # Exibir card sem GIF e com fundo branco quando a quantidade for 0
                         st.markdown(
                             f"""
-                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
+                            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff; position: relative;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                <span class="tooltiptext">{description}</span>
                             </div>
                             """,
                             unsafe_allow_html=True
                         )
+
             else:
                 st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
+
+        # Estilo CSS para o tooltip
+        st.markdown(
+            """
+            <style>
+            .tooltip {
+                position: relative;
+                display: inline-block;
+                cursor: pointer;
+            }
+            .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 200px;
+                background-color: #555;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%; /* Posiciona acima do card */
+                left: 50%;
+                margin-left: -100px; /* Centraliza o tooltip */
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            .tooltip .tooltiptext::after {
+                content: "";
+                position: absolute;
+                top: 100%; /* Posiciona a seta abaixo do tooltip */
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #555 transparent transparent transparent;
+            }
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+                opacity: 1;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
 
         # Atualizar a última data de atualização
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
@@ -332,7 +372,6 @@ else:
                 st.error(f"Erro ao buscar issues criadas: {response_created.status_code} - {response_created.text}")
                 total_created = 0
                 issues_created = []
-
             # Buscar issues resolvidas
             response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_resolved)
             if response_resolved.status_code == 200:
@@ -341,7 +380,6 @@ else:
             else:
                 st.error(f"Erro ao buscar issues resolvidas: {response_resolved.status_code} - {response_resolved.text}")
                 total_resolved = 0
-
             # Criar gráfico de pizza
             labels = ['Criadas', 'Resolvidas']
             values = [total_created, total_resolved]
@@ -353,7 +391,6 @@ else:
             )
             # Exibir o gráfico de pizza
             st.plotly_chart(fig_pie, use_container_width=True)
-
             # Gráfico de barras por assignee
             if issues_created:
                 # Contar issues por assignee
@@ -370,11 +407,9 @@ else:
                         assignee_count[assignee_name] += 1
                     else:
                         assignee_count[assignee_name] = 1
-
                 # Preparar dados para o gráfico de barras
                 assignees = list(assignee_count.keys())
                 counts = list(assignee_count.values())
-
                 # Criar gráfico de barras
                 fig_bar = px.bar(
                     x=assignees,
@@ -386,12 +421,10 @@ else:
                     color_discrete_sequence=px.colors.qualitative.Pastel
                 )
                 fig_bar.update_traces(textposition='outside')  # Posicionar os números acima das barras
-
                 # Exibir o gráfico de barras
                 st.plotly_chart(fig_bar, use_container_width=True)
             else:
                 st.warning("Nenhuma issue criada encontrada para exibir o gráfico de assignees.")
-
     elif menu_option == "User List":
         # Importar e executar o código do arquivo import_user_jira.py
         from import_user_jira import main
