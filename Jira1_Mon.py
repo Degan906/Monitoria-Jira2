@@ -116,18 +116,6 @@ else:
             },
         }
 
-        # Dicionário de descrições para cada query
-        query_descriptions = {
-            "AP-Sem link de DOC": "Indica que o Projeto Apontamento está sem o link de Documentação.",
-            "AP-Sem link de VIDRO": "Indica que o Projeto Apontamento está sem o link de Vidro.",
-            "AP-Sem Link de AÇO": "Indica que o Projeto Apontamento está sem o link de Aço.",
-            "AP-Sem link de MANTA": "Indica que o Projeto Apontamento está sem o link de Manta.",
-            "AP-Sem link de SVIDRO": "Indica que o Projeto Apontamento está sem o link de Suporte Vidro.",
-            "AP-Sem link de PB": "Indica que o Projeto Apontamento está sem o link de Produção Blindados.",
-            "AP - Ag.Ent-Data Exército preenchida": "Indica que a Data de Liberação do Exército foi preenchida para entradas aguardando entrada.",
-            # Adicione descrições para os outros cards aqui...
-        }
-
         # Criar duas colunas para os botões
         col1, col2 = st.columns(2)
 
@@ -261,12 +249,6 @@ else:
                             """,
                             unsafe_allow_html=True
                         )
-
-                    # Botão para exibir a descrição do card
-                    if st.button(f"Informações: {query_name}", key=f"info_{query_name}"):
-                        # Verificar se a descrição existe no dicionário
-                        description = query_descriptions.get(query_name, "Descrição não disponível.")
-                        st.info(description)  # Exibir a descrição em um popup informativo
             else:
                 st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
 
@@ -350,6 +332,7 @@ else:
                 st.error(f"Erro ao buscar issues criadas: {response_created.status_code} - {response_created.text}")
                 total_created = 0
                 issues_created = []
+
             # Buscar issues resolvidas
             response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_resolved)
             if response_resolved.status_code == 200:
@@ -358,6 +341,7 @@ else:
             else:
                 st.error(f"Erro ao buscar issues resolvidas: {response_resolved.status_code} - {response_resolved.text}")
                 total_resolved = 0
+
             # Criar gráfico de pizza
             labels = ['Criadas', 'Resolvidas']
             values = [total_created, total_resolved]
@@ -369,6 +353,7 @@ else:
             )
             # Exibir o gráfico de pizza
             st.plotly_chart(fig_pie, use_container_width=True)
+
             # Gráfico de barras por assignee
             if issues_created:
                 # Contar issues por assignee
@@ -385,9 +370,11 @@ else:
                         assignee_count[assignee_name] += 1
                     else:
                         assignee_count[assignee_name] = 1
+
                 # Preparar dados para o gráfico de barras
                 assignees = list(assignee_count.keys())
                 counts = list(assignee_count.values())
+
                 # Criar gráfico de barras
                 fig_bar = px.bar(
                     x=assignees,
@@ -399,6 +386,7 @@ else:
                     color_discrete_sequence=px.colors.qualitative.Pastel
                 )
                 fig_bar.update_traces(textposition='outside')  # Posicionar os números acima das barras
+
                 # Exibir o gráfico de barras
                 st.plotly_chart(fig_bar, use_container_width=True)
             else:
