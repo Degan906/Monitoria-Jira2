@@ -324,7 +324,7 @@ else:
         aplicar_filtros = st.button("Aplicar Filtros")
         
         # Construir as JQLs com base nos filtros
-        jql_criados = f'project = JSM AND created >= "{data_inicio_criacao}" AND created <= "{data_fim_criacao}"'
+        jql_criados = f'project = JSM AND created >= "{data_inicio_criacao}" AND created <= "{data_fim_criacao}"  AND "sistema[dropdown]" = Jira AND status != Cancelado'
         
         if usar_filtro_resolucao:
             jql_resolvidos = f'project = JSM AND resolutiondate >= "{data_inicio_resolucao}" AND resolutiondate <= "{data_fim_resolucao}"  AND "sistema[dropdown]" = Jira AND status != Cancelado'
