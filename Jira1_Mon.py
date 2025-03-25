@@ -208,20 +208,46 @@ else:
         for col in cols:
             col.empty()
 
-        # Renderizar todos os cards primeiro
+        # Adicionar estilo CSS para o efeito piscante
+        st.markdown("""
+        <style>
+            @keyframes blink {
+                0% { background-color: #ff3333; }
+                50% { background-color: #ffff99; }
+                100% { background-color: #ff3333; }
+            }
+            .blinking-card {
+                animation: blink 1s linear infinite;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                padding: 10px;
+                text-align: center;
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin: 10px;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Renderizar todos os cards
         for i, (query_name, jql) in enumerate(queries["🤖 AUTOMAÇÕES AP 🤖"].items()):
             response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
             if response.status_code == 200:
                 data = response.json()
                 issue_count = data.get('total', 0)  # Obter o número total de issues
 
-                # Exibir o card inicial
+                # Exibir o card
                 with cols[i % num_columns]:  # Distribuir os cards nas colunas disponíveis
                     if issue_count > 0:
-                        # Exibir fundo amarelo quando a quantidade for maior que 0 (sem GIF)
+                        # Card com efeito piscante
                         st.markdown(
                             f"""
-                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffff99;">
+                            <div class="blinking-card">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
@@ -230,7 +256,7 @@ else:
                             unsafe_allow_html=True
                         )
                     else:
-                        # Exibir card sem GIF e com fundo branco quando a quantidade for 0
+                        # Card normal sem efeito
                         st.markdown(
                             f"""
                             <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
