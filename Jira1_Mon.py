@@ -177,16 +177,6 @@ else:
                     disabled=True,
                     column_order=["Chave", "Tipo", "Resumo", "Criado", "Relator", "Responsável", "Status", "Resolução"]
                 )
-                # Reproduzir som de alarme usando JavaScript
-                st.markdown(
-                    """
-                    <audio autoplay>
-                        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mp3">
-                        Seu navegador não suporta o elemento de áudio.
-                    </audio>
-                    """,
-                    unsafe_allow_html=True
-                )
             else:
                 st.info("Nenhuma issue alarmada encontrada.")
 
@@ -226,14 +216,13 @@ else:
                 # Exibir o card inicial
                 with cols[i % num_columns]:  # Distribuir os cards nas colunas disponíveis
                     if issue_count > 0:
-                        # Exibir GIF e fundo amarelo quando a quantidade for maior que 0
+                        # Exibir fundo amarelo quando a quantidade for maior que 0 (sem GIF)
                         st.markdown(
                             f"""
                             <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffff99;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
-                                <img src="https://em-content.zobj.net/source/animated-noto-color-emoji/356/police-car-light_1f6a8.gif" width="50" height="50" style="margin-top: 5px;">
                             </div>
                             """,
                             unsafe_allow_html=True
