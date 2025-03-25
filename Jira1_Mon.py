@@ -15,8 +15,8 @@ st.set_page_config(page_title="Monitoria", layout="wide")
 USERS = {
     "admin": "admin",
     "henrique.degan": "12345",
-    "user2": "password2",
-    "user3": "password3"
+    "vinicius.herrera": "12345",
+    "dante.labate": "12345"
 }
 
 # Função para buscar dados no Jira
