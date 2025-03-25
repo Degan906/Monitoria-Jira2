@@ -327,9 +327,9 @@ else:
         jql_criados = f'project = JSM AND created >= "{data_inicio_criacao}" AND created <= "{data_fim_criacao}"'
         
         if usar_filtro_resolucao:
-            jql_resolvidos = f'project = JSM AND resolutiondate >= "{data_inicio_resolucao}" AND resolutiondate <= "{data_fim_resolucao}"'
+            jql_resolvidos = f'project = JSM AND resolutiondate >= "{data_inicio_resolucao}" AND resolutiondate <= "{data_fim_resolucao}"  AND "sistema[dropdown]" = Jira AND status != Cancelado'
         else:
-            jql_resolvidos = f'project = JSM AND resolutiondate >= "{data_inicio_criacao}" AND resolutiondate <= "{data_fim_criacao}" AND resolutiondate is not EMPTY'
+            jql_resolvidos = f'project = JSM AND resolutiondate >= "{data_inicio_criacao}" AND resolutiondate <= "{data_fim_criacao}" AND resolutiondate is not EMPTY  AND "sistema[dropdown]" = Jira AND status != Cancelado'
         
         # Buscar dados
         with st.spinner("Buscando dados do Jira..."):
