@@ -80,7 +80,7 @@ else:
     st.sidebar.title("Menu")
     menu_option = st.sidebar.selectbox(
         "Escolha uma opção:",
-        ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM", "User List"]
+        ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM", "User List", "Controle de licenças"]
     )
 
     if menu_option == "Dash de monitoria":
@@ -552,6 +552,15 @@ else:
     elif menu_option == "User List":
         # Importar e executar o código do arquivo import_user_jira.py
         from import_user_jira import main
+        main(
+            jira_url=st.session_state.jira_url,
+            email=st.session_state.email,
+            api_token=st.session_state.api_token
+        )
+        
+    elif menu_option == "Controle de licenças":
+        # Importar e executar o código do arquivo Dash_User.py
+        from Dash_User import main
         main(
             jira_url=st.session_state.jira_url,
             email=st.session_state.email,
