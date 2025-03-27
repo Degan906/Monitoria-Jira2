@@ -2,6 +2,8 @@ import streamlit as st
 from jira import JIRA
 import pandas as pd
 import requests
+from requests.auth import HTTPBasicAuth
+import json
 
 # ==============================================
 # CONFIGURAÇÃO DA PÁGINA
