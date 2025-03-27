@@ -77,12 +77,15 @@ else:
     status_bar = st.empty()
 
     # Menu lateral
-    st.sidebar.title("Menu - 1")
+    st.sidebar.title("Menu")
     menu_option = st.sidebar.selectbox(
         "Escolha uma opção:",
         ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM", "User List"]
     )
 
+    # Adicionando o link clicável
+    st.sidebar.markdown("[Clique aqui para acessar as licenças](https://licencascarbonjira.streamlit.app/)")
+    
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")  # Título para a seção de dashboard
 
