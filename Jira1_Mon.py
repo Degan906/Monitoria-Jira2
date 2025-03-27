@@ -551,7 +551,7 @@ else:
 
     elif menu_option == "User List":
         # Importar e executar o código do arquivo import_user_jira.py
-        from import_user_jira import main
+        from Dash_User import main
         main(
             jira_url=st.session_state.jira_url,
             email=st.session_state.email,
