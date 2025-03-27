@@ -550,13 +550,16 @@ else:
                 st.warning("Nenhuma issue criada encontrada para exibir o gráfico de assignees.")
 
     elif menu_option == "User List":
-        # Importar e executar o código do arquivo import_user_jira.py
+    # Importar e executar o código do arquivo Dash_User.py
+    try:
         from Dash_User import main
         main(
             jira_url=st.session_state.jira_url,
             email=st.session_state.email,
             api_token=st.session_state.api_token
         )
+    except ModuleNotFoundError as e:
+        st.error(f"Erro ao importar módulo: {e}")
 
     # Exibir a data e hora atual no rodapé
     current_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
