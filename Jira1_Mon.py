@@ -77,7 +77,7 @@ else:
     status_bar = st.empty()
 
     # Menu lateral
-    st.sidebar.title("Menu")
+    st.sidebar.title("Menu - 1")
     menu_option = st.sidebar.selectbox(
         "Escolha uma opção:",
         ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM", "User List"]
