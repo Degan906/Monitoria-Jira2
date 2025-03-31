@@ -24,7 +24,6 @@ def login():
         "vinicius.herrera": "12345",
         "dante.labate": "12345"
     }
-
     # Tela de login
     st.markdown("""
     <div style="text-align: center; margin-top: 50px;">
@@ -33,11 +32,9 @@ def login():
         <h1 style="font-size: 24px; margin-top: 20px;">Login</h1>
     </div>
     """, unsafe_allow_html=True)
-
     # Campos de entrada
     username = st.text_input("Usuário")
     password = st.text_input("Senha", type="password")
-
     # Botão de login
     if st.button("Entrar"):
         if username in valid_credentials and password == valid_credentials[username]:
@@ -111,7 +108,6 @@ else:
     def contar_chamados_pendentes(jql):
         try:
             issues = jira.search_issues(jql, maxResults=0, validate_query=False)
-            st.write(f"Total de chamados encontrados: {issues.total}")  # Log de depuração
             return issues.total
         except Exception as e:
             st.error(f"Erro ao contar chamados: {str(e)}")
@@ -207,10 +203,14 @@ else:
     AND resolution = Unresolved
     AND "Request Type" = "Solicitação de Acesso Jira (JSM)"
     """
+
     JQL_SERVICE_MANAGEMENT = """
-    project = "JSM" AND issuetype = "Service request" AND resolution = Unresolved
-    AND "Sistema" = "Jira" AND "Tipo de Solicitação" = "Solicitação de Acesso Jira (JSM)"
-    AND "Produto Jira" IN ("JSM - Jira Service Management")
+    project = JSM
+    AND type = "[System] Service request"
+    AND "sistema[dropdown]" = Jira
+    AND "produto jira[select list (multiple choices)]" = "JSM - Jira Service Management"
+    AND resolution = Unresolved
+    AND "Request Type" = "Solicitação de Acesso Jira (JSM)"
     """
 
     # ==============================================
@@ -232,6 +232,7 @@ else:
 
     with tab1:
         col1, col2 = st.columns(2)
+
         # Card Jira Software
         with col1:
             criar_card_licenca(
@@ -241,6 +242,7 @@ else:
                 grupo="jira-software-users",
                 chamados_pendentes=contar_chamados_pendentes(JQL_JIRA_SOFTWARE)
             )
+
         # Card Service Management
         with col2:
             criar_card_licenca(
@@ -250,6 +252,7 @@ else:
                 grupo="jira-servicemanagement-users",
                 chamados_pendentes=contar_chamados_pendentes(JQL_SERVICE_MANAGEMENT)
             )
+
         # Detalhes de usuários
         if "mostrar_usuarios_grupo" in st.session_state:
             grupo = st.session_state.mostrar_usuarios_grupo
@@ -303,7 +306,9 @@ else:
                     if 'jira-servicemanagement-users' in user['groups']['items']:
                         produtos.append("Service Management")
                 return ", ".join(produtos) if produtos else "Nenhum"
+
             df['Produto'] = df.apply(determinar_produto, axis=1)
+
             # Filtros
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -314,6 +319,7 @@ else:
                 else:
                     status_filter = 'Todos'
                     st.warning("Coluna 'active' não encontrada")
+
             with col2:
                 # Filtro por Tipo de Conta
                 if 'accountType' in df.columns:
@@ -322,10 +328,12 @@ else:
                 else:
                     account_type_filter = 'Todos'
                     st.warning("Coluna 'accountType' não encontrada")
+
             with col3:
                 # Filtro por Produto
                 produto_options = ['Todos'] + sorted(df['Produto'].unique().tolist())
                 produto_filter = st.selectbox('Produto', options=produto_options)
+
             # Aplicando filtros
             if status_filter != 'Todos' and 'active' in df.columns:
                 df = df[df['active'] == status_filter]
@@ -333,12 +341,15 @@ else:
                 df = df[df['accountType'] == account_type_filter]
             if produto_filter != 'Todos':
                 df = df[df['Produto'].str.contains(produto_filter, na=False)]
+
             # Exibição dos dados
             st.write(f"Total de Usuários: {len(df)}")
+
             # Seleciona colunas para exibir
             cols_to_show = ['displayName', 'emailAddress', 'accountType', 'Produto']
             if 'active' in df.columns:
                 cols_to_show.append('active')
+
             # Renomeia colunas para exibição
             df_display = df[cols_to_show].rename(columns={
                 'displayName': 'Nome',
@@ -346,11 +357,13 @@ else:
                 'accountType': 'Tipo de Conta',
                 'active': 'Ativo'
             })
+
             st.dataframe(
                 df_display,
                 use_container_width=True,
                 height=600
             )
+
             # CSS para melhorar a exibição
             st.markdown("""
             <style>
