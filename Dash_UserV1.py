@@ -113,32 +113,6 @@ else:
             st.error(f"Erro ao contar chamados: {str(e)}")
             return "Erro"
 
-    def fetch_users():
-        all_users = []
-        start_at = 0
-        max_results = 50
-        while True:
-            try:
-                response = requests.get(
-                    f"{JIRA_SERVER}/rest/api/2/users/search",
-                    params={
-                        'startAt': start_at,
-                        'maxResults': max_results
-                    },
-                    headers={"Accept": "application/json"},
-                    auth=HTTPBasicAuth(JIRA_EMAIL, JIRA_API_KEY)
-                )
-                response.raise_for_status()
-                data = response.json()
-                if not data:
-                    break
-                all_users.extend(data)
-                start_at += max_results
-            except Exception as e:
-                st.error(f"Erro ao buscar usuários: {str(e)}")
-                break
-        return all_users
-
     def criar_card_licenca(titulo, total, usadas, grupo, chamados_pendentes):
         # Cálculos
         livres = total - usadas
@@ -202,21 +176,15 @@ else:
     # QUERIES JQL
     # ==============================================
     JQL_JIRA_SOFTWARE = """
-    project = JSM
-    AND type = "[System] Service request"
-    AND "sistema[dropdown]" = Jira
-    AND "produto jira[select list (multiple choices)]" = "JSW - Jira Software"
-    AND resolution = Unresolved
-    AND "Request Type" = "Solicitação de Acesso Jira (JSM)"
+    project = "JSM" AND issuetype = "Service request" AND resolution = Unresolved
+    AND "Sistema" = "Jira" AND "Tipo de Solicitação" = "Solicitação de Acesso Jira (JSM)"
+    AND "Produto Jira" IN ("JSW - Jira Software")
     """
 
     JQL_SERVICE_MANAGEMENT = """
-    project = JSM
-    AND type = "[System] Service request"
-    AND "sistema[dropdown]" = Jira
-    AND "produto jira[select list (multiple choices)]" = "JSM - Jira Service Management"
-    AND resolution = Unresolved
-    AND "Request Type" = "Solicitação de Acesso Jira (JSM)"
+    project = "JSM" AND issuetype = "Service request" AND resolution = Unresolved
+    AND "Sistema" = "Jira" AND "Tipo de Solicitação" = "Solicitação de Acesso Jira (JSM)"
+    AND "Produto Jira" IN ("JSM - Jira Service Management")
     """
 
     # ==============================================
