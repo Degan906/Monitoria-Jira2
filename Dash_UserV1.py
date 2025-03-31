@@ -199,9 +199,12 @@ else:
     # QUERIES JQL
     # ==============================================
     JQL_JIRA_SOFTWARE = """
-    project = "JSM" AND issuetype = "Service request" AND resolution = Unresolved
-    AND "Sistema" = "Jira" AND "Tipo de Solicitação" = "Solicitação de Acesso Jira (JSM)"
-    AND "Produto Jira" IN ("JSW - Jira Software")
+    project = JSM
+    AND type = "[System] Service request"
+    AND "sistema[dropdown]" = Jira
+    AND "produto jira[select list (multiple choices)]" = "JSW - Jira Software"
+    AND resolution = Unresolved
+    AND "Request Type" = "Solicitação de Acesso Jira (JSM)"
     """
     JQL_SERVICE_MANAGEMENT = """
     project = "JSM" AND issuetype = "Service request" AND resolution = Unresolved
