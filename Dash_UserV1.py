@@ -56,7 +56,6 @@ else:
     JIRA_EMAIL = "henrique.degan@oatsolutions.com.br"
     JIRA_API_KEY = "b4mAs0sXJCx3101YvgkhBD3F"
     JIRA_SERVER = "https://carboncars.atlassian.net"
-
     # Configuração do cliente JIRA
     jira = JIRA(
         server=JIRA_SERVER,
@@ -143,6 +142,7 @@ else:
         # Cálculos
         livres = total - usadas
         em_chamado = chamados_pendentes  # Chamados pendentes representam as licenças em processo de solicitação
+        capacit = livres - em_chamado  # Novo cálculo: Livres - Em Chamado
         critico = livres < 50  # Define se a situação é crítica (menos de 50 licenças livres)
 
         with st.container():
@@ -184,7 +184,7 @@ else:
                     <p><strong>Usadas:</strong> {usadas}</p>
                     <p><strong>Livres:</strong> <span style='color: {'red' if critico else 'green'}; font-weight: bold;'>{livres}</span></p>
                     <p><strong>Em Chamado:</strong> <span style='color: {'orange' if em_chamado > 0 else 'green'}; font-weight: bold;'>{em_chamado}</span></p>
-                    <p><strong>Chamados Pendentes:</strong> <span style='color: {'orange' if isinstance(chamados_pendentes, int) and chamados_pendentes > 0 else 'green'}; font-weight: bold;'>{chamados_pendentes}</span></p>
+                    <p><strong>Capacit:</strong> <span style='color: {'red' if capacit < 0 else 'green'}; font-weight: bold;'>{capacit}</span></p>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -209,7 +209,6 @@ else:
     AND resolution = Unresolved
     AND "Request Type" = "Solicitação de Acesso Jira (JSM)"
     """
-
     JQL_SERVICE_MANAGEMENT = """
     project = JSM
     AND type = "[System] Service request"
@@ -314,7 +313,6 @@ else:
                 return ", ".join(produtos) if produtos else "Nenhum"
 
             df['Produto'] = df.apply(determinar_produto, axis=1)
-
             # Filtros
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -350,7 +348,6 @@ else:
 
             # Exibição dos dados
             st.write(f"Total de Usuários: {len(df)}")
-
             # Seleciona colunas para exibir
             cols_to_show = ['displayName', 'emailAddress', 'accountType', 'Produto']
             if 'active' in df.columns:
@@ -363,13 +360,11 @@ else:
                 'accountType': 'Tipo de Conta',
                 'active': 'Ativo'
             })
-
             st.dataframe(
                 df_display,
                 use_container_width=True,
                 height=600
             )
-
             # CSS para melhorar a exibição
             st.markdown("""
             <style>
