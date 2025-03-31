@@ -140,8 +140,11 @@ else:
         return all_users
 
     def criar_card_licenca(titulo, total, usadas, grupo, chamados_pendentes):
+        # Cálculos
         livres = total - usadas
-        critico = livres < 50
+        em_chamado = chamados_pendentes  # Chamados pendentes representam as licenças em processo de solicitação
+        critico = livres < 50  # Define se a situação é crítica (menos de 50 licenças livres)
+
         with st.container():
             st.markdown(
                 f"""
@@ -180,15 +183,18 @@ else:
                     <p><strong>Total:</strong> {total}</p>
                     <p><strong>Usadas:</strong> {usadas}</p>
                     <p><strong>Livres:</strong> <span style='color: {'red' if critico else 'green'}; font-weight: bold;'>{livres}</span></p>
+                    <p><strong>Em Chamado:</strong> <span style='color: {'orange' if em_chamado > 0 else 'green'}; font-weight: bold;'>{em_chamado}</span></p>
                     <p><strong>Chamados Pendentes:</strong> <span style='color: {'orange' if isinstance(chamados_pendentes, int) and chamados_pendentes > 0 else 'green'}; font-weight: bold;'>{chamados_pendentes}</span></p>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-            st.progress(min(100, int((usadas / total) * 100)))  # Parêntese corrigido aqui
+            st.progress(min(100, int((usadas / total) * 100)))  # Barra de progresso
+
             # Botão "Ver Usuários"
             if st.button(f"Ver Usuários ({grupo})", key=f"btn_{grupo}"):
                 st.session_state.mostrar_usuarios_grupo = grupo  # Armazena o grupo no session_state
+
             if critico:
                 st.error("⚠️ **ATENÇÃO:** Licenças críticas! Verifique imediatamente.")
 
