@@ -111,6 +111,7 @@ else:
     def contar_chamados_pendentes(jql):
         try:
             issues = jira.search_issues(jql, maxResults=0, validate_query=False)
+            st.write(f"Total de chamados encontrados: {issues.total}")  # Log de depuração
             return issues.total
         except Exception as e:
             st.error(f"Erro ao contar chamados: {str(e)}")
