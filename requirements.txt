@@ -3,6 +3,6 @@ requests==2.31.0
 pytz==2023.3
 plotly==5.18.0
 jira
-dash==2.9.3
-pandas==1.5.3
-openpyxl==3.1.2
+dash
+pandas
+openpyxl
