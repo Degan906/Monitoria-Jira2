@@ -360,4 +360,4 @@ else:
                 issues_created = []
 
             # Buscar issues resolvidas
-            response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token,
+            response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token,jql_resolved)
