@@ -133,12 +133,17 @@ def mostrar_dashboard_gestao(jira_url, email, api_token, buscar_jira):
                     title="Chamados por Responsável",
                     labels={"Responsável": "Responsável", "Quantidade": "Número de Chamados"},
                     color="Quantidade",
-                    color_continuous_scale=px.colors.sequential.Blues
+                    color_continuous_scale=px.colors.sequential.Blues,
+                    text="Quantidade"  # Adiciona o texto (quantidade) nas barras
+                )
+                fig_barras.update_traces(
+                    textposition='outside'  # Posiciona o texto fora das barras
                 )
                 fig_barras.update_layout(
                     xaxis_title="Responsável",
                     yaxis_title="Número de Chamados",
-                    margin=dict(l=20, r=20, t=40, b=20)
+                    margin=dict(l=20, r=20, t=40, b=20),
+                    showlegend=False  # Oculta a legenda, se necessário
                 )
                 st.plotly_chart(fig_barras, use_container_width=True)
             else:
