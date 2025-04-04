@@ -8,6 +8,9 @@ import pytz
 import pandas as pd
 import plotly.express as px
 
+# Importação da função do Dashboard de Gestão
+from dashboard_gestao import mostrar_dashboard_gestao
+
 # Configuração da página
 st.set_page_config(page_title="Monitoria", layout="wide")
 
@@ -85,7 +88,7 @@ else:
 
     # Adicionando o link clicável
     st.sidebar.markdown("[Clique aqui para acessar as licenças](https://licencascarbonjira.streamlit.app/)")
-    
+
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")  # Título para a seção de dashboard
 
@@ -118,7 +121,6 @@ else:
                 "Vidro EXPORT": 'project = VIDRO AND type = Vidro AND "blindagem[short text]" ~ "EXPORT" and labels  != 🟢EXPORT',
                 "Doc sem cliente": 'created >= "2025-03-24" AND project = DOC and "Cliente[Short text]" IS EMPTY and issuetype = "Autorização de Blindagem" and status != Cancelado',
                 "AP sem cliente": 'project = AP AND type = Recebimento AND status != Cancelado and created >= "2025-03-24" and "Cliente[Short text]" IS EMPTY'
-                
             },
         }
 
@@ -243,7 +245,6 @@ else:
             if response.status_code == 200:
                 data = response.json()
                 issue_count = data.get('total', 0)  # Obter o número total de issues
-
                 # Exibir o card
                 with cols[i % num_columns]:  # Distribuir os cards nas colunas disponíveis
                     if issue_count > 0:
@@ -282,148 +283,13 @@ else:
         st.rerun()
 
     elif menu_option == "Dashs Gestão":
-        st.title("Dashboard de Gestão")
-        
-        # Configuração dos filtros de data
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            # Filtro para data de criação (padrão: primeiro dia do mês atual)
-            data_inicio_criacao = st.date_input(
-                "Data de início (criação)",
-                value=datetime.now().replace(day=1),  # Primeiro dia do mês atual
-                format="DD/MM/YYYY"
-            )
-        
-        with col2:
-            # Filtro para data final de criação (padrão: hoje)
-            data_fim_criacao = st.date_input(
-                "Data de fim (criação)",
-                value=datetime.now(),  # Hoje
-                format="DD/MM/YYYY"
-            )
-        
-        # Adicionar filtros para data de resolução
-        st.subheader("Filtros para Chamados Resolvidos")
-        col3, col4 = st.columns(2)
-        
-        with col3:
-            usar_filtro_resolucao = st.checkbox("Usar filtro para data de resolução", value=False)
-        
-        with col4:
-            if usar_filtro_resolucao:
-                data_inicio_resolucao = st.date_input(
-                    "Data de início (resolução)",
-                    value=datetime.now().replace(day=1),  # Primeiro dia do mês atual
-                    format="DD/MM/YYYY"
-                )
-                data_fim_resolucao = st.date_input(
-                    "Data de fim (resolução)",
-                    value=datetime.now(),  # Hoje
-                    format="DD/MM/YYYY"
-                )
-        
-        # Botão para aplicar filtros
-        aplicar_filtros = st.button("Aplicar Filtros")
-        
-        # Construir as JQLs com base nos filtros
-        jql_criados = f'project = JSM AND created >= "{data_inicio_criacao}" AND created <= "{data_fim_criacao}"  AND "sistema[dropdown]" = Jira AND status != Cancelado'
-        
-        if usar_filtro_resolucao:
-            jql_resolvidos = f'project = JSM AND resolutiondate >= "{data_inicio_resolucao}" AND resolutiondate <= "{data_fim_resolucao}"  AND "sistema[dropdown]" = Jira AND status != Cancelado'
-        else:
-            jql_resolvidos = f'project = JSM AND resolutiondate >= "{data_inicio_criacao}" AND resolutiondate <= "{data_fim_criacao}" AND resolutiondate is not EMPTY  AND "sistema[dropdown]" = Jira AND status != Cancelado'
-        
-        # Buscar dados
-        with st.spinner("Buscando dados do Jira..."):
-            # Buscar chamados criados
-            response_criados = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_criados)
-            total_criados = response_criados.json().get('total', 0) if response_criados.status_code == 200 else 0
-            
-            # Buscar chamados resolvidos
-            response_resolvidos = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_resolvidos)
-            total_resolvidos = response_resolvidos.json().get('total', 0) if response_resolvidos.status_code == 200 else 0
-        
-        # Exibir métricas
-        st.subheader("Métricas Gerais")
-        col_met1, col_met2, col_met3 = st.columns(3)
-        
-        with col_met1:
-            st.metric("Chamados Criados", total_criados)
-        
-        with col_met2:
-            st.metric("Chamados Resolvidos", total_resolvidos)
-        
-        with col_met3:
-            diferenca = total_criados - total_resolvidos
-            st.metric("Diferença", diferenca, delta_color="inverse")
-        
-        # Gráfico de pizza
-        st.subheader("Chamados Criados vs Resolvidos")
-        
-        if total_criados > 0 or total_resolvidos > 0:
-            fig = px.pie(
-                names=['Criados', 'Resolvidos'],
-                values=[total_criados, total_resolvidos],
-                color=['Criados', 'Resolvidos'],
-                color_discrete_map={'Criados':'#FF7F0E', 'Resolvidos':'#1F77B4'},
-                hole=0.3
-            )
-            
-            fig.update_traces(
-                textposition='inside',
-                textinfo='percent+label+value',
-                hoverinfo='label+percent+value'
-            )
-            
-            fig.update_layout(
-                showlegend=False,
-                margin=dict(l=20, r=20, t=30, b=20)
-            )
-            
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.warning("Nenhum dado encontrado para os filtros selecionados.")
-        
-        # Tabela com detalhes dos chamados (opcional)
-        expander = st.expander("Ver detalhes dos chamados")
-        with expander:
-            if total_criados > 0:
-                # Buscar issues criadas com detalhes
-                jql_detalhes = f'{jql_criados} ORDER BY created DESC'
-                response_detalhes = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_detalhes)
-                
-                if response_detalhes.status_code == 200:
-                    issues = response_detalhes.json().get('issues', [])
-                    
-                    if issues:
-                        dados_tabela = []
-                        for issue in issues:
-                            fields = issue.get('fields', {})
-                            dados_tabela.append({
-                                "Chave": f"[{issue['key']}]({st.session_state.jira_url}/browse/{issue['key']})",
-                                "Resumo": fields.get('summary', 'N/A'),
-                                "Status": fields.get('status', {}).get('name', 'N/A'),
-                                "Criado": datetime.strptime(fields.get('created', ''), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo')),
-                                "Responsável": fields.get('assignee', {}).get('displayName', 'Não atribuído')
-                            })
-                        
-                        df = pd.DataFrame(dados_tabela)
-                        st.dataframe(
-                            df,
-                            column_config={
-                                "Chave": st.column_config.LinkColumn("Chave"),
-                                "Criado": st.column_config.DatetimeColumn("Criado", format="DD/MM/YYYY HH:mm")
-                            },
-                            hide_index=True,
-                            use_container_width=True
-                        )
-                    else:
-                        st.info("Nenhum chamado encontrado com os filtros atuais.")
-                else:
-                    st.error(f"Erro ao buscar detalhes: {response_detalhes.status_code}")
-            else:
-                st.info("Nenhum chamado criado no período selecionado.")
+        # Chamada para o Dashboard de Gestão modularizado
+        mostrar_dashboard_gestao(
+            jira_url=st.session_state.jira_url,
+            email=st.session_state.email,
+            api_token=st.session_state.api_token,
+            buscar_jira=buscar_jira
+        )
 
     elif menu_option == "Relatorio Geral ITSM":
         st.title("Relatorio Geral ITSM")
@@ -494,80 +360,4 @@ else:
                 issues_created = []
 
             # Buscar issues resolvidas
-            response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_resolved)
-            if response_resolved.status_code == 200:
-                data_resolved = response_resolved.json()
-                total_resolved = data_resolved.get('total', 0)
-            else:
-                st.error(f"Erro ao buscar issues resolvidas: {response_resolved.status_code} - {response_resolved.text}")
-                total_resolved = 0
-
-            # Criar gráfico de pizza
-            labels = ['Criadas', 'Resolvidas']
-            values = [total_created, total_resolved]
-            fig_pie = px.pie(
-                names=labels,
-                values=values,
-                title="Issues Criadas vs Resolvidas no Mês",
-                color_discrete_sequence=px.colors.qualitative.Pastel
-            )
-            # Exibir o gráfico de pizza
-            st.plotly_chart(fig_pie, use_container_width=True)
-
-            # Gráfico de barras por assignee
-            if issues_created:
-                # Contar issues por assignee
-                assignee_count = {}
-                for issue in issues_created:
-                    # Verificar se o campo 'assignee' existe e não é None
-                    assignee = issue['fields'].get('assignee')
-                    if assignee:  # Se o assignee existir
-                        assignee_name = assignee.get('displayName', 'Não Atribuído')
-                    else:  # Se o assignee for None
-                        assignee_name = 'Não Atribuído'
-                    # Contar issues por assignee
-                    if assignee_name in assignee_count:
-                        assignee_count[assignee_name] += 1
-                    else:
-                        assignee_count[assignee_name] = 1
-
-                # Preparar dados para o gráfico de barras
-                assignees = list(assignee_count.keys())
-                counts = list(assignee_count.values())
-
-                # Criar gráfico de barras
-                fig_bar = px.bar(
-                    x=assignees,
-                    y=counts,
-                    labels={'x': 'Assignee', 'y': 'Número de Issues'},
-                    title="Issues por Assignee no Mês",
-                    text=counts,
-                    color=assignees,
-                    color_discrete_sequence=px.colors.qualitative.Pastel
-                )
-                fig_bar.update_traces(textposition='outside')  # Posicionar os números acima das barras
-
-                # Exibir o gráfico de barras
-                st.plotly_chart(fig_bar, use_container_width=True)
-            else:
-                st.warning("Nenhuma issue criada encontrada para exibir o gráfico de assignees.")
-
-    elif menu_option == "User List":
-        # Importar e executar o código do arquivo import_user_jira.py
-        from import_user_jira import main
-        main(
-            jira_url=st.session_state.jira_url,
-            email=st.session_state.email,
-            api_token=st.session_state.api_token
-        )
-
-    # Exibir a data e hora atual no rodapé
-    current_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
-    st.markdown(
-        f"""
-        <div style="position: fixed; bottom: 0; right: 20px; font-size: 12px;">
-           ✅ - Desenvolvido por Degan - 🌐 - Versão 1.1  - 🛂 - Usuário logado: {st.session_state.email} | Data e Hora: {current_time}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+            response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token,
