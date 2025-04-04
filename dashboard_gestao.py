@@ -98,6 +98,54 @@ def mostrar_dashboard_gestao(jira_url, email, api_token, buscar_jira):
     else:
         st.warning("Nenhum dado encontrado para os filtros selecionados.")
 
+    # Gráfico de barras: Chamados por Assignee
+    st.subheader("Distribuição de Chamados por Responsável")
+    if total_criados > 0:
+        # Buscar issues criadas com detalhes
+        jql_detalhes = f'{jql_criados} ORDER BY created DESC'
+        response_detalhes = buscar_jira(jira_url, email, api_token, jql_detalhes)
+        if response_detalhes.status_code == 200:
+            issues = response_detalhes.json().get('issues', [])
+            if issues:
+                dados_tabela = []
+                for issue in issues:
+                    fields = issue.get('fields', {})
+                    assignee_name = fields.get('assignee', {}).get('displayName', 'Não atribuído')
+                    dados_tabela.append({
+                        "Chave": issue['key'],
+                        "Resumo": fields.get('summary', 'N/A'),
+                        "Status": fields.get('status', {}).get('name', 'N/A'),
+                        "Criado": datetime.strptime(fields.get('created', ''), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo')),
+                        "Responsável": assignee_name
+                    })
+                df = pd.DataFrame(dados_tabela)
+
+                # Agrupar chamados por responsável
+                chamados_por_assignee = df.groupby("Responsável").size().reset_index(name="Quantidade")
+
+                # Criar o gráfico de barras
+                fig_barras = px.bar(
+                    chamados_por_assignee,
+                    x="Responsável",
+                    y="Quantidade",
+                    title="Chamados por Responsável",
+                    labels={"Responsável": "Responsável", "Quantidade": "Número de Chamados"},
+                    color="Quantidade",
+                    color_continuous_scale=px.colors.sequential.Blues
+                )
+                fig_barras.update_layout(
+                    xaxis_title="Responsável",
+                    yaxis_title="Número de Chamados",
+                    margin=dict(l=20, r=20, t=40, b=20)
+                )
+                st.plotly_chart(fig_barras, use_container_width=True)
+            else:
+                st.info("Nenhum chamado encontrado com os filtros atuais.")
+        else:
+            st.error(f"Erro ao buscar detalhes: {response_detalhes.status_code}")
+    else:
+        st.info("Nenhum chamado criado no período selecionado.")
+
     # Tabela com detalhes dos chamados (opcional)
     expander = st.expander("Ver detalhes dos chamados")
     with expander:
