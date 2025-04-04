@@ -110,7 +110,9 @@ def mostrar_dashboard_gestao(jira_url, email, api_token, buscar_jira):
                 dados_tabela = []
                 for issue in issues:
                     fields = issue.get('fields', {})
-                    assignee_name = fields.get('assignee', {}).get('displayName', 'Não atribuído')
+                    # Correção para evitar AttributeError
+                    assignee = fields.get('assignee')
+                    assignee_name = assignee.get('displayName', 'Não atribuído') if assignee else 'Não atribuído'
                     dados_tabela.append({
                         "Chave": issue['key'],
                         "Resumo": fields.get('summary', 'N/A'),
@@ -159,12 +161,15 @@ def mostrar_dashboard_gestao(jira_url, email, api_token, buscar_jira):
                     dados_tabela = []
                     for issue in issues:
                         fields = issue.get('fields', {})
+                        # Correção para evitar AttributeError
+                        assignee = fields.get('assignee')
+                        assignee_name = assignee.get('displayName', 'Não atribuído') if assignee else 'Não atribuído'
                         dados_tabela.append({
                             "Chave": f"[{issue['key']}]({jira_url}/browse/{issue['key']})",
                             "Resumo": fields.get('summary', 'N/A'),
                             "Status": fields.get('status', {}).get('name', 'N/A'),
                             "Criado": datetime.strptime(fields.get('created', ''), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo')),
-                            "Responsável": fields.get('assignee', {}).get('displayName', 'Não atribuído')
+                            "Responsável": assignee_name
                         })
                     df = pd.DataFrame(dados_tabela)
                     st.dataframe(
