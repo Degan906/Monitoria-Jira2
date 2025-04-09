@@ -1,4 +1,5 @@
-# V4.1 - 11/03/2025 - Degan
+# V4.1 - 09/04/2025 - Degan
+# Adicionado as JQL de mnonitoria de Labels
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
@@ -119,8 +120,9 @@ else:
                 "PB - Instalando Vidro erro": 'project = "Produção Blindados" AND status = "Instalando Vidro"  AND issueLinkType = "PB > VF" AND issueLinkType = "PB > VM" AND resolution = "Done" ORDER BY created DESC',
                 "Peças sem Marca/Veiculo": 'project = SUPPLY AND type = "Supply Chain" AND "Request Type (Custom)[Short text]" ~ "Peças Produção" and "Marca[Short text]" IS EMPTY',
                 "Vidro EXPORT": 'project = VIDRO AND type = Vidro AND "blindagem[short text]" ~ "EXPORT" and labels  != 🟢EXPORT',
-                "Doc sem cliente": 'created >= "2025-03-24" AND project = DOC and "Cliente[Short text]" IS EMPTY and issuetype = "Autorização de Blindagem" and status != Cancelado',
-                "AP sem cliente": 'project = AP AND type = Recebimento AND status != Cancelado and created >= "2025-03-24" and "Cliente[Short text]" IS EMPTY'
+                #"Doc sem cliente": 'created >= "2025-03-24" AND project = DOC and "Cliente[Short text]" IS EMPTY and issuetype = "Autorização de Blindagem" and status != Cancelado', #Inativo 09/04/25
+                #"AP sem cliente": 'project = AP AND type = Recebimento AND status != Cancelado and created >= "2025-03-24" and "Cliente[Short text]" IS EMPTY', #Inativo 09/04/25
+                "Vidros done com label" 'project = AP and JSW_P-Vidro ~ Done and labels IN (V) AND status != Cancelado'
             },
         }
 
