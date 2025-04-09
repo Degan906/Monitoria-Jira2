@@ -122,7 +122,7 @@ else:
                 "Vidro EXPORT": 'project = VIDRO AND type = Vidro AND "blindagem[short text]" ~ "EXPORT" and labels  != 🟢EXPORT',
                 #"Doc sem cliente": 'created >= "2025-03-24" AND project = DOC and "Cliente[Short text]" IS EMPTY and issuetype = "Autorização de Blindagem" and status != Cancelado', #Inativo 09/04/25,
                 #"AP sem cliente": 'project = AP AND type = Recebimento AND status != Cancelado and created >= "2025-03-24" and "Cliente[Short text]" IS EMPTY', #Inativo 09/04/25,
-                "Vidros done com label" = 'project = AP and JSW_P-Vidro ~ Done and labels IN (V) AND status != Cancelado'
+                "Vidros done com label": 'project = AP and JSW_P-Vidro ~ Done and labels IN (V) AND status != Cancelado'
             },
         }
 
