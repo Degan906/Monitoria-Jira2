@@ -17,7 +17,7 @@ st.set_page_config(page_title="Monitoria", layout="wide")
 
 # Dicionário de usuários e senhas
 USERS = {
-    "admin": "admin",
+    "admin": "omelhorchefedomundoevoce",
     "henrique.degan": "12345",
     "vinicius.herrera": "12345",
     "dante.labate": "12345"
