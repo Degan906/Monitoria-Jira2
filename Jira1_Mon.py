@@ -110,6 +110,7 @@ else:
                 "PB-Veículo Finalizado sem Validação": 'filter in ("10983") AND project = PB AND "Veiculo Finalizado na Produção" is not EMPTY AND "12 - Aguardando Validações" is EMPTY',
                 "PB-Passou-131-Exército/TM/aberto": 'project = PB AND status changed to "131 - Exército Concluído" after startOfYear() and "JSW_P-Validação (TM) - Done" is empty',
                 "PB-DT.CONTRATO vazia": 'filter in ("10983") AND type in ("Produção Blindados", "Produção Blindados - QA") AND DT.CONTRATO is EMPTY AND status != Cancelado',
+                "PB-Prazo Contrato vazia": 'filter in ("10983") AND type in ("Produção Blindados", "Produção Blindados - QA") AND "Prozo Contrato" is EMPTY AND status != Cancelado',
                 "PB-6.3-Finalizar Toyota": 'filter in ("10549") AND issuetype = "Produção Blindados" AND status = "6.3 - Finalizar Toyota" AND "Tag Toyota" = TOYOTA',
                 "Compras sem Supply": 'filter in ("10549") AND project = COM AND created >= 2023-07-01 AND issueLinkType = EMPTY',
                 "Monitoria de processo Incidentes": 'filter in ("10549") AND project = SJM AND issuetype = "[System] Incident" AND labels = ⚠️MONITORIA⚠️ AND resolution = Unresolved and status = "Aguardando Atendimento"',
@@ -124,7 +125,9 @@ else:
                 #"AP sem cliente": 'project = AP AND type = Recebimento AND status != Cancelado and created >= "2025-03-24" and "Cliente[Short text]" IS EMPTY', #Inativo 09/04/25,
                 "Vidros done com label": 'project = AP and JSW_P-Vidro ~ Done and labels IN (V) AND status != Cancelado',
                 "Aços done com label": 'project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
-                "Mantas done com label": 'project = AP and JSW_P-Manta ~ Done and labels IN (M) AND status != Cancelado'
+                "Mantas done com label": 'project = AP and JSW_P-Manta ~ Done and labels IN (M) AND status != Cancelado',
+                "Tensylon done com label": 'project = AP and JSW_P-Manta ~ Done and labels IN (T) AND status != Cancelado',
+                "Suporte Vidro done com label": 'project = AP and JSW_P-Svidro ~ Done and labels IN (S) AND status != Cancelado'
             },
         }
 
