@@ -306,33 +306,6 @@ st.markdown("""
     left: 0;
     z-index: 5;
 }
-
-/* Estilo para o menu de usuário */
-.user-menu {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-}
-
-.user-menu-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin-left: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    border: none;
-}
-
-.user-menu-button:hover {
-    background-color: #45a049;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -421,56 +394,6 @@ def get_jira_data():
             raw_issues[status] = []
     return dataframes, raw_issues
 
-# Função para alterar senha
-def change_password(username, current_password, new_password):
-    credentials = load_credentials()
-    
-    # Verifica se o usuário existe e a senha atual está correta
-    if username in credentials and credentials[username] == current_password:
-        # Atualiza a senha
-        credentials[username] = new_password
-        save_credentials(credentials)
-        return True, "Senha alterada com sucesso!"
-    else:
-        return False, "Senha atual incorreta."
-
-# Tela de alteração de senha
-def password_change_screen():
-    st.subheader("Alterar Senha")
-    
-    # Usa o usuário logado automaticamente
-    username = st.session_state.get("current_user", "")
-    st.write(f"Usuário: {username}")
-    
-    current_password = st.text_input("Senha Atual", type="password", key="current_password")
-    new_password = st.text_input("Nova Senha", type="password", key="new_password")
-    confirm_password = st.text_input("Confirmar Nova Senha", type="password", key="confirm_password")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("Alterar Senha", type="primary"):
-            if not current_password or not new_password or not confirm_password:
-                st.error("Todos os campos são obrigatórios.")
-            elif new_password != confirm_password:
-                st.error("A nova senha e a confirmação não coincidem.")
-            else:
-                success, message = change_password(username, current_password, new_password)
-                if success:
-                    st.success(message)
-                    # Redireciona para a tela principal após 2 segundos
-                    st.markdown("""
-                    <meta http-equiv="refresh" content="2;URL='?'">
-                    """, unsafe_allow_html=True)
-                else:
-                    st.error(message)
-    
-    with col2:
-        if st.button("Cancelar", type="secondary"):
-            # Redireciona para a tela principal
-            st.session_state.pop("show_password_change", None)
-            st.rerun()
-
 # Tela de login
 def login():
     credentials = load_credentials()
@@ -496,33 +419,9 @@ def login():
             st.error("Usuário ou senha inválidos.")
 
 # Verificar se o usuário está logado
-if "show_password_change" in st.session_state and st.session_state["show_password_change"]:
-    password_change_screen()
-elif "logged_in" not in st.session_state or not st.session_state["logged_in"]:
+if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     login()
 else:
-    # Menu do usuário
-    st.markdown(
-        f"""
-        <div class="user-menu">
-            <span>Usuário: {st.session_state.get("current_user", "")}</span>
-            <button onclick="window.location.href='?change_password=true'" class="user-menu-button">Alterar Senha</button>
-            <button onclick="window.location.href='?logout=true'" class="user-menu-button">Sair</button>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    
-    # Verifica se o usuário clicou em "Alterar Senha" ou "Sair"
-    if "change_password" in st.query_params:
-        st.session_state["show_password_change"] = True
-        st.rerun()
-    elif "logout" in st.query_params:
-        # Limpa a sessão e redireciona para a tela de login
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-        st.rerun()
-    
     # Botão para atualização manual
     st.markdown("<div class='button-container'>", unsafe_allow_html=True)
     if st.button("Atualizar Dados", key="update_button", type="primary"):
