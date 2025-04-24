@@ -593,7 +593,7 @@ else:
     
     # Atualização automática a cada 3 minutos
     progress_bar = st.progress(0)
-    for seconds in range(180):
+    for seconds in range(600):
         time.sleep(1)
-        progress_bar.progress((seconds + 1) / 180)
+        progress_bar.progress((seconds + 1) / 600)
     st.rerun()
