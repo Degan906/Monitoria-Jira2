@@ -1,10 +1,15 @@
+#24/04/25 - V1 -  Desenvolvidop por Degan
+
+
 import streamlit as st
 import pandas as pd
 import requests
 from datetime import datetime, timedelta
 import textwrap
 import time
+import webbrowser
 import json
+import os
 
 # Configuração da API do Jira
 JIRA_URL = "https://carboncars.atlassian.net/rest/api/2/search"
@@ -91,6 +96,40 @@ queries = {
     #"MÉTODO DE AVISO AB/DB": 'project = DOC AND type IN ("Declaração de Blindagem", "Autorização de Blindagem") AND status = "9 - Concluido" AND resolved >= startOfMonth(-1) AND resolved <= endOfMonth() ORDER BY resolved ASC, Rank ASC'
 }
 
+# Arquivo para armazenar as credenciais
+CREDENTIALS_FILE = "credentials.json"
+
+# Função para carregar credenciais
+def load_credentials():
+    if os.path.exists(CREDENTIALS_FILE):
+        try:
+            with open(CREDENTIALS_FILE, "r") as f:
+                return json.load(f)
+        except:
+            return {
+                "henrique.degan": "12345",
+                "vinicius.herrera": "12345",
+                "dante.labate": "12345",
+                "marcelo.lopes": "Carbon@25",
+                "elizabeth.galoni": "Carbon@25"
+                
+            }
+    else:
+        # Credenciais padrão
+        default_credentials = {
+            "henrique.degan": "12345",
+            "vinicius.herrera": "12345",
+            "dante.labate": "12345"
+        }
+        # Salva as credenciais padrão
+        save_credentials(default_credentials)
+        return default_credentials
+
+# Função para salvar credenciais
+def save_credentials(credentials):
+    with open(CREDENTIALS_FILE, "w") as f:
+        json.dump(credentials, f)
+
 # Layout do Streamlit
 st.set_page_config(page_title="Autorização de Blindagem", layout="wide")
 
@@ -124,12 +163,7 @@ st.markdown("""
     margin-right: 20px;
     margin-bottom: 25px; /* Adicionado espaçamento vertical entre os cards */
     border: 3px solid black;
-    cursor: pointer; /* Adiciona cursor de mão para indicar que é clicável */
-    position: relative; /* Necessário para posicionar o tooltip */
-}
-
-.card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efeito de sombra ao passar o mouse */
+    position: relative; /* Necessário para o tooltip */
 }
 
 .card p {
@@ -173,6 +207,10 @@ st.markdown("""
 .card:hover .tooltip {
     visibility: visible;
     opacity: 1;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efeito de sombra ao passar o mouse */
 }
 
 .circle-count-inline {
@@ -235,16 +273,16 @@ st.markdown("""
 /* Estilo para o botão de atualização */
 .update-button {
     background-color: #4CAF50;
-    border: none;
     color: white;
     padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    margin: 10px 2px;
+    margin: 10px 0;
     cursor: pointer;
     border-radius: 5px;
+    border: none;
 }
 
 .update-button:hover {
@@ -257,41 +295,46 @@ st.markdown("""
     justify-content: center;
     margin-bottom: 20px;
 }
+
+/* Estilo para links dentro dos cards */
+.card-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+}
+
+/* Estilo para o menu de usuário */
+.user-menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.user-menu-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+}
+
+.user-menu-button:hover {
+    background-color: #45a049;
+}
 </style>
 """, unsafe_allow_html=True)
-
-# JavaScript para redirecionar ao clicar no card
-st.markdown("""
-<script>
-function openJiraTicket(ticketId) {
-    window.open('https://carboncars.atlassian.net/browse/' + ticketId, '_blank');
-}
-</script>
-""", unsafe_allow_html=True)
-
-# Função para determinar a cor com base na diferença de dias
-def get_background_color(contract_date):
-    try:
-        # Verifica se a data do contrato é válida
-        if not contract_date or contract_date == "N/A":
-            return "#ffffff"  # Branco (caso a data do contrato seja inválida ou ausente)
-        # Converte a data do contrato para um objeto datetime
-        contract_dt = datetime.strptime(contract_date[:10], "%Y-%m-%d")
-        today = datetime.now()
-        # Calcula a diferença em dias
-        delta = (contract_dt - today).days
-        # Define a cor com base nas regras
-        if delta > 5:
-            return "#c4e4b4"  # Verde
-        elif 3 <= delta <= 5:
-            return "#fff3cd"  # Laranja
-        elif 0 <= delta <= 2:
-            return "#f8d7da"  # Vermelho
-        else:  # delta < 0 (data já passou)
-            return "#946cec"  # Roxo
-    except Exception as e:
-        st.error(f"Erro ao processar data do contrato: {str(e)}")
-        return "#ffffff"  # Branco (caso ocorra algum erro)
 
 # Função para criar o texto do tooltip
 def create_tooltip_text(issue):
@@ -320,23 +363,35 @@ def create_tooltip_text(issue):
     blindagem = fields.get("customfield_11040", "N/A")
     
     # Formata o texto do tooltip
-    tooltip_text = f"""
-Key - Jira: {key}
-OS: {summary}
-Veiculo Marca/Modelo: {marca} {modelo}
-VAMEO: {labels}
-Criado: {created}
-Project: {project_name}
-OS/PD: {os_pd}
-Marca: {marca}
-Modelo: {modelo}
-Placa: {placa}
-Veiculo (compras): {veiculo_compras}
-Cor: {cor}
-Chassi: {chassi}
-Blindagem: {blindagem}
-"""
+    tooltip_text = f"Key - Jira: {key}\nOS: {summary}\nVeiculo Marca/Modelo: {marca} {modelo}\nVAMEO: {labels}\nCriado: {created}\nProject: {project_name}\nOS/PD: {os_pd}\nMarca: {marca}\nModelo: {modelo}\nPlaca: {placa}\nVeiculo (compras): {veiculo_compras}\nCor: {cor}\nChassi: {chassi}\nBlindagem: {blindagem}"
+    
     return tooltip_text
+
+# Função para determinar a cor com base na diferença de dias
+def get_background_color(contract_date):
+    try:
+        # Verifica se a data do contrato é válida
+        if not contract_date or contract_date == "N/A":
+            return "#ffffff"  # Branco (caso a data do contrato seja inválida ou ausente)
+        # Converte a data do contrato para um objeto datetime
+        contract_dt = datetime.strptime(contract_date[:10], "%Y-%m-%d")
+        today = datetime.now()
+        # Calcula a diferença em dias
+        delta = (contract_dt - today).days
+        # Debug: Exibir a diferença de dias no console
+        #st.write(f"Diferença de dias: {delta} (Contrato: {contract_dt}, Hoje: {today})")
+        # Define a cor com base nas regras
+        if delta > 5:
+            return "#c4e4b4"  # Verde
+        elif 3 <= delta <= 5:
+            return "#fff3cd"  # Laranja
+        elif 0 <= delta <= 2:
+            return "#f8d7da"  # Vermelho
+        else:  # delta < 0 (data já passou)
+            return "#946cec"  # Roxo
+    except Exception as e:
+        st.error(f"Erro ao processar data do contrato: {str(e)}")
+        return "#ffffff"  # Branco (caso ocorra algum erro)
 
 # Buscar e processar dados
 @st.cache_data(ttl=60)  # Cache de 1 minuto
@@ -366,13 +421,60 @@ def get_jira_data():
             raw_issues[status] = []
     return dataframes, raw_issues
 
+# Função para alterar senha
+def change_password(username, current_password, new_password):
+    credentials = load_credentials()
+    
+    # Verifica se o usuário existe e a senha atual está correta
+    if username in credentials and credentials[username] == current_password:
+        # Atualiza a senha
+        credentials[username] = new_password
+        save_credentials(credentials)
+        return True, "Senha alterada com sucesso!"
+    else:
+        return False, "Senha atual incorreta."
+
+# Tela de alteração de senha
+def password_change_screen():
+    st.subheader("Alterar Senha")
+    
+    # Usa o usuário logado automaticamente
+    username = st.session_state.get("current_user", "")
+    st.write(f"Usuário: {username}")
+    
+    current_password = st.text_input("Senha Atual", type="password", key="current_password")
+    new_password = st.text_input("Nova Senha", type="password", key="new_password")
+    confirm_password = st.text_input("Confirmar Nova Senha", type="password", key="confirm_password")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("Alterar Senha", type="primary"):
+            if not current_password or not new_password or not confirm_password:
+                st.error("Todos os campos são obrigatórios.")
+            elif new_password != confirm_password:
+                st.error("A nova senha e a confirmação não coincidem.")
+            else:
+                success, message = change_password(username, current_password, new_password)
+                if success:
+                    st.success(message)
+                    # Redireciona para a tela principal após 2 segundos
+                    st.markdown("""
+                    <meta http-equiv="refresh" content="2;URL='?'">
+                    """, unsafe_allow_html=True)
+                else:
+                    st.error(message)
+    
+    with col2:
+        if st.button("Cancelar", type="secondary"):
+            # Redireciona para a tela principal
+            st.session_state.pop("show_password_change", None)
+            st.rerun()
+
 # Tela de login
 def login():
-    valid_credentials = {
-        "henrique.degan": "12345",
-        "vinicius.herrera": "12345",
-        "dante.labate": "12345"
-    }
+    credentials = load_credentials()
+    
     st.markdown("""
     <div style="text-align: center; margin-top: 50px;">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCx0Ywq0Bhihr0RLdHbBrqyuCsRLoV2KLs2g&s" 
@@ -380,23 +482,50 @@ def login():
         <h1 style="font-size: 24px; margin-top: 20px;">Login</h1>
     </div>
     """, unsafe_allow_html=True)
+    
     username = st.text_input("Usuário", key="username")
     password = st.text_input("Senha", type="password", key="password")
-    if st.button("Entrar"):
-        if username in valid_credentials and password == valid_credentials[username]:
+    
+    if st.button("Entrar", type="primary"):
+        if username in credentials and credentials[username] == password:
             st.session_state["logged_in"] = True
+            st.session_state["current_user"] = username
             st.success("Login bem-sucedido!")
             st.rerun()
         else:
             st.error("Usuário ou senha inválidos.")
 
 # Verificar se o usuário está logado
-if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
+if "show_password_change" in st.session_state and st.session_state["show_password_change"]:
+    password_change_screen()
+elif "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     login()
 else:
+    # Menu do usuário
+    st.markdown(
+        f"""
+        <div class="user-menu">
+            <span>Usuário: {st.session_state.get("current_user", "")}</span>
+            <button onclick="window.location.href='?change_password=true'" class="user-menu-button">Alterar Senha</button>
+            <button onclick="window.location.href='?logout=true'" class="user-menu-button">Sair</button>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    # Verifica se o usuário clicou em "Alterar Senha" ou "Sair"
+    if "change_password" in st.query_params:
+        st.session_state["show_password_change"] = True
+        st.rerun()
+    elif "logout" in st.query_params:
+        # Limpa a sessão e redireciona para a tela de login
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
+    
     # Botão para atualização manual
     st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-    if st.button("Atualizar Dados", key="update_button"):
+    if st.button("Atualizar Dados", key="update_button", type="primary"):
         # Limpa o cache para forçar a atualização dos dados
         st.cache_data.clear()
         st.success("Dados atualizados com sucesso!")
@@ -435,15 +564,20 @@ else:
                         issue_data = next((issue for issue in raw_issues[status] if issue["key"] == ticket_id), None)
                         tooltip_text = create_tooltip_text(issue_data) if issue_data else "Informações não disponíveis"
                         
-                        # Cria o card com tooltip e redirecionamento para o Jira
+                        # URL do Jira para o ticket
+                        jira_url = f"https://carboncars.atlassian.net/browse/{ticket_id}"
+                        
+                        # Cria um link clicável para o Jira
                         st.markdown(
                             f"""
-                            <div class='card' onclick="window.open('https://carboncars.atlassian.net/browse/{ticket_id}', '_blank')">
-                                <div class='tooltip'>{tooltip_text}</div>
-                                <p class='summary'>{row['OS/PD']}</p> <!-- Summary -->
-                                <p>{modelo if modelo else 'N/A'}</p> <!-- Modelo -->
-                                <p class='label'>{labels}</p> <!-- Labels -->
-                            </div>
+                            <a href="{jira_url}" target="_blank" style="text-decoration: none; color: inherit;">
+                                <div class='card'>
+                                    <div class='tooltip'>{tooltip_text}</div>
+                                    <p class='summary'>{row['OS/PD']}</p>
+                                    <p>{modelo if modelo else 'N/A'}</p>
+                                    <p class='label'>{labels}</p>
+                                </div>
+                            </a>
                             """,
                             unsafe_allow_html=True,
                         )
@@ -458,9 +592,8 @@ else:
     )
     
     # Atualização automática a cada 3 minutos
-    if "manual_update" not in st.session_state or not st.session_state["manual_update"]:
-        progress_bar = st.progress(0)
-        for seconds in range(180):
-            time.sleep(1)
-            progress_bar.progress((seconds + 1) / 180)
-        st.rerun()
+    progress_bar = st.progress(0)
+    for seconds in range(180):
+        time.sleep(1)
+        progress_bar.progress((seconds + 1) / 180)
+    st.rerun()
