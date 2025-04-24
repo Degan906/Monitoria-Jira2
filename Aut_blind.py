@@ -496,3 +496,5 @@ else:
         time.sleep(1)
         progress_bar.progress((seconds + 1) / 600)
     st.rerun()
+
+                        
