@@ -473,6 +473,7 @@ else:
                                 <div class='card'>
                                     <div class='tooltip'>{tooltip_text}</div>
                                     <p class='summary'>{row['OS/PD']}</p>
+                                    <hr style='border: 1px solid black; margin: 5px 0;'> <!-- Linha adicionada -->
                                     <p>{modelo if modelo else 'N/A'}</p>
                                     <p class='label'>{labels}</p>
                                 </div>
