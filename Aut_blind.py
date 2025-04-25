@@ -1,6 +1,4 @@
-#24/04/25 - V1 -  Desenvolvidop por Degan
-
-
+#24/04/25 - V1 -  Desenvolvido por Degan
 import streamlit as st
 import pandas as pd
 import requests
@@ -10,6 +8,7 @@ import time
 import webbrowser
 import json
 import os
+from pytz import timezone  # Importa o módulo de fuso horário
 
 # Configuração da API do Jira
 JIRA_URL = "https://carboncars.atlassian.net/rest/api/2/search"
@@ -27,7 +26,6 @@ def fetch_jira_data(jql_query):
         "maxResults": 100  # Define o número máximo de resultados por página
     }
     all_issues = []  # Lista para armazenar todos os issues
-
     try:
         while True:
             response = requests.get(JIRA_URL, headers=headers, auth=auth, params=params, timeout=10)
@@ -36,11 +34,9 @@ def fetch_jira_data(jql_query):
                 issues = data.get("issues", [])
                 total = data.get("total", 0)  # Total de issues correspondentes à consulta
                 all_issues.extend(issues)  # Adiciona os issues da página atual à lista
-
                 # Verifica se há mais issues para buscar
                 if len(all_issues) >= total:
                     break  # Sai do loop quando todos os issues forem recuperados
-
                 # Atualiza o índice de início para a próxima página
                 params["startAt"] += params["maxResults"]
             else:
@@ -49,7 +45,6 @@ def fetch_jira_data(jql_query):
     except Exception as e:
         st.error(f"Erro na conexão com o Jira: {str(e)}")
         return None
-
     return {"issues": all_issues}  # Retorna todos os issues coletados
 
 # Função para formatar data
@@ -93,7 +88,6 @@ queries = {
     "AB/DB CONCLUÍDA": 'project = DOC AND type IN ("Declaração de Blindagem", "Autorização de Blindagem") AND status = "AB Concluida" ORDER BY Rank ASC',
     "TENTATIVA DE CONTATO": 'project = DOC AND type IN ("Declaração de Blindagem", "Autorização de Blindagem") AND status = "AB Concluida" ORDER BY Rank ASC',
     "REPARO EXTERNO": 'project = DOC AND type IN ("Declaração de Blindagem", "Autorização de Blindagem") AND status = "Reparo Externo" ORDER BY Rank ASC',
-    #"MÉTODO DE AVISO AB/DB": 'project = DOC AND type IN ("Declaração de Blindagem", "Autorização de Blindagem") AND status = "9 - Concluido" AND resolved >= startOfMonth(-1) AND resolved <= endOfMonth() ORDER BY resolved ASC, Rank ASC'
 }
 
 # Arquivo para armazenar as credenciais
@@ -112,7 +106,6 @@ def load_credentials():
                 "dante.labate": "12345",
                 "marcelo.lopes": "Carbon@25",
                 "elizabeth.galoni": "Carbon@25"
-                
             }
     else:
         # Credenciais padrão
@@ -165,7 +158,6 @@ st.markdown("""
     border: 3px solid black;
     position: relative; /* Necessário para o tooltip */
 }
-
 .card p {
     margin: 0;
     word-wrap: break-word;
@@ -173,16 +165,13 @@ st.markdown("""
     font-weight: bold; /* Negrito padrão */
     font-size: 10px;   /* Tamanho padrão */
 }
-
 .card .summary {
     font-size: 20px; /* Tamanho maior para o summary */
 }
-
 .card .label {
     font-size: 12px; /* Tamanho menor para o label */
     color: Snow;     /* Cor branca para o label */
 }
-
 /* Estilo para o tooltip */
 .tooltip {
     visibility: hidden;
@@ -203,16 +192,13 @@ st.markdown("""
     line-height: 1.4;
     white-space: pre-line;
 }
-
 .card:hover .tooltip {
     visibility: visible;
     opacity: 1;
 }
-
 .card:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efeito de sombra ao passar o mouse */
 }
-
 .circle-count-inline {
     width: 60px; /* Largura do círculo */
     height: 60px; /* Altura do círculo */
@@ -228,7 +214,6 @@ st.markdown("""
     border: 3px solid black; /* Adiciona uma borda preta ao redor do círculo */
     background-color: transparent; /* Fundo transparente */
 }
-
 .section-title {
     background-color: black;
     color: white;
@@ -239,23 +224,19 @@ st.markdown("""
     margin-bottom: 10px;
     margin-top: 20px;
 }
-
 .cards-row {
     display: flex;
     align-items: center;
     margin-bottom: 40px; /* Aumentado o espaçamento entre as linhas de cards */
 }
-
 /* Adiciona espaçamento vertical entre as seções de cards */
 .stHorizontalBlock {
     margin-bottom: 20px;
 }
-
 /* Adiciona espaçamento vertical entre as colunas de cards */
 .row-widget.stHorizontalBlock > div {
     margin-bottom: 25px;
 }
-
 .footer {
     text-align: center;
     font-size: 18px;
@@ -269,7 +250,6 @@ st.markdown("""
     background-color: white; /* Fundo branco para melhor legibilidade */
     z-index: 1000; /* Garante que o rodapé fique acima de outros elementos */
 }
-
 /* Estilo para o botão de atualização */
 .update-button {
     background-color: #4CAF50;
@@ -284,18 +264,15 @@ st.markdown("""
     border-radius: 5px;
     border: none;
 }
-
 .update-button:hover {
     background-color: #45a049;
 }
-
 /* Centraliza o botão de atualização */
 .button-container {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
 }
-
 /* Estilo para links dentro dos cards */
 .card-link {
     display: block;
@@ -313,20 +290,16 @@ st.markdown("""
 def create_tooltip_text(issue):
     # Extrai os valores dos campos personalizados com tratamento para campos ausentes
     fields = issue.get("fields", {})
-    
     # Extrai os valores com tratamento para campos ausentes
     key = issue.get("key", "N/A")
     summary = fields.get("summary", "N/A")
     created = format_date(fields.get("created", ""))
-    
     # Campos personalizados
     modelo = fields.get("customfield_11070", "N/A")
     marca = fields.get("customfield_11069", "N/A")
     labels = ", ".join(fields.get("labels", [])) or "N/A"
-    
     # Projeto
     project_name = fields.get("project", {}).get("name", "N/A") if fields.get("project") else "N/A"
-    
     # Outros campos personalizados
     os_pd = fields.get("customfield_10256", "N/A")
     placa = fields.get("customfield_10253", "N/A")
@@ -334,10 +307,8 @@ def create_tooltip_text(issue):
     cor = fields.get("customfield_10038", "N/A")
     chassi = fields.get("customfield_10257", "N/A")
     blindagem = fields.get("customfield_11040", "N/A")
-    
     # Formata o texto do tooltip
     tooltip_text = f"Key - Jira: {key}\nOS: {summary}\nVeiculo Marca/Modelo: {marca} {modelo}\nVAMEO: {labels}\nCriado: {created}\nProject: {project_name}\nOS/PD: {os_pd}\nMarca: {marca}\nModelo: {modelo}\nPlaca: {placa}\nVeiculo (compras): {veiculo_compras}\nCor: {cor}\nChassi: {chassi}\nBlindagem: {blindagem}"
-    
     return tooltip_text
 
 # Função para determinar a cor com base na diferença de dias
@@ -397,7 +368,6 @@ def get_jira_data():
 # Tela de login
 def login():
     credentials = load_credentials()
-    
     st.markdown("""
     <div style="text-align: center; margin-top: 50px;">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCx0Ywq0Bhihr0RLdHbBrqyuCsRLoV2KLs2g&s" 
@@ -405,10 +375,8 @@ def login():
         <h1 style="font-size: 24px; margin-top: 20px;">Login</h1>
     </div>
     """, unsafe_allow_html=True)
-    
     username = st.text_input("Usuário", key="username")
     password = st.text_input("Senha", type="password", key="password")
-    
     if st.button("Entrar", type="primary"):
         if username in credentials and credentials[username] == password:
             st.session_state["logged_in"] = True
@@ -429,10 +397,9 @@ else:
         st.cache_data.clear()
         st.success("Dados atualizados com sucesso!")
     st.markdown("</div>", unsafe_allow_html=True)
-    
+
     # Exibição dos dados
     dataframes, raw_issues = get_jira_data()
-    
     for status, df in dataframes.items():
         count = len(df)  # Calcula a quantidade de registros no DataFrame
         # Exibe o título da seção
@@ -458,14 +425,11 @@ else:
                         ticket_id = row['Ticket ID']
                         modelo = textwrap.fill(row['Modelo'] if row['Modelo'] else "N/A", width=10)
                         labels = row['Labels']  # Obtém os labels formatados
-                        
                         # Encontra o issue correspondente para criar o tooltip
                         issue_data = next((issue for issue in raw_issues[status] if issue["key"] == ticket_id), None)
                         tooltip_text = create_tooltip_text(issue_data) if issue_data else "Informações não disponíveis"
-                        
                         # URL do Jira para o ticket
                         jira_url = f"https://carboncars.atlassian.net/browse/{ticket_id}"
-                        
                         # Cria um link clicável para o Jira
                         st.markdown(
                             f"""
@@ -481,21 +445,20 @@ else:
                             """,
                             unsafe_allow_html=True,
                         )
-        
         # Adiciona um espaçador entre as seções
         st.markdown("<div style='margin-bottom: 30px;'></div>", unsafe_allow_html=True)
 
     # Rodapé com última atualização
+    brazil_tz = timezone('America/Sao_Paulo')  # Define o fuso horário de Brasília
+    current_time = datetime.now(brazil_tz).strftime('%d/%m/%Y %H:%M:%S')  # Obtém a data e hora no fuso horário correto
     st.markdown(
-        f"<div class='footer'>Última atualização: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</div>",
+        f"<div class='footer'>Última atualização: {current_time}</div>",
         unsafe_allow_html=True,
     )
-    
-    # Atualização automática a cada 3 minutos
+
+    # Atualização automática a cada 10 minutos
     progress_bar = st.progress(0)
     for seconds in range(600):
         time.sleep(1)
         progress_bar.progress((seconds + 1) / 600)
     st.rerun()
-
-                        
