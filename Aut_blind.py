@@ -180,7 +180,7 @@ st.markdown("""
 
 .card .label {
     font-size: 12px; /* Tamanho menor para o label */
-    color: gray;     /* Cor cinza para o label */
+    color: Snow;     /* Cor branca para o label */
 }
 
 /* Estilo para o tooltip */
