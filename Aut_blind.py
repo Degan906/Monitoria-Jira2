@@ -150,7 +150,7 @@ st.markdown("""
 .card {
     width: 120px;
     height: 120px;
-    background-color: #d1e7dd; /* Verde claro padrão */
+    background-color: #CDC9C9; /* Cinza claro padrão */
     border: 0px solid #ccc;
     border-radius: 5px;
     padding: 20px;
