@@ -129,7 +129,8 @@ else:
                 "Mantas done com label": 'project = AP and JSW_P-Manta ~ Done and labels IN (M) AND status != Cancelado',
                 "Tensylon done com label": 'project = AP and JSW_P-Manta ~ Done and labels IN (T) AND status != Cancelado',
                 "Suporte Vidro done com label": 'project = AP and JSW_P-Svidro ~ Done and labels IN (S) AND status != Cancelado',
-                "Pendências sem OS": 'project = PD and "OS/PD[Short text]" IS EMPTY'
+                "Pendências sem OS": 'project = PD and "OS/PD[Short text]" IS EMPTY',
+                "Vidros RNC sem Serial": 'project = "Fábrica de Vidro" AND "Tipo Card[Select List (cascading)]" IN ("RNC Produção", "RNC Assistência") AND VGA-SERIAL IS EMPTY AND TSP-SERIAL IS EMPTY AND TSC-SERIAL IS EMPTY AND TSB-SERIAL IS EMPTY AND TSA-SERIAL IS EMPTY AND TME-SERIAL IS EMPTY AND TMD-SERIAL IS EMPTY AND QTE-SERIAL IS EMPTY AND QTD-SERIAL IS EMPTY AND QSE-SERIAL IS EMPTY AND QSD-SERIAL IS EMPTY AND QDE-SERIAL IS EMPTY AND QDD-SERIAL IS EMPTY AND PTE-SERIAL IS EMPTY AND PTD-SERIAL IS EMPTY AND PEE-SERIAL IS EMPTY AND PED-SERIAL IS EMPTY AND PDE-SERIAL IS EMPTY AND PDD-SERIAL IS EMPTY AND PBS-SERIAL IS EMPTY AND OPA-SERIAL IS EMPTY AND OLS-SERIAL IS EMPTY AND FTE-SERIAL IS EMPTY AND FTD-SERIAL IS EMPTY AND FDE-SERIAL IS EMPTY AND FDD-SERIAL IS EMPTY AND createdDate >= "2025-05-20"'
             },
         }
 
