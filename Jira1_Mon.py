@@ -128,7 +128,8 @@ else:
                 "Aços done com label": 'project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
                 "Mantas done com label": 'project = AP and JSW_P-Manta ~ Done and labels IN (M) AND status != Cancelado',
                 "Tensylon done com label": 'project = AP and JSW_P-Manta ~ Done and labels IN (T) AND status != Cancelado',
-                "Suporte Vidro done com label": 'project = AP and JSW_P-Svidro ~ Done and labels IN (S) AND status != Cancelado'
+                "Suporte Vidro done com label": 'project = AP and JSW_P-Svidro ~ Done and labels IN (S) AND status != Cancelado',
+                "Pendências sem OS": 'project = PD and "OS/PD[Short text]" IS EMPTY'
             },
         }
 
