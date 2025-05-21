@@ -280,16 +280,23 @@ else:
         """, unsafe_allow_html=True)
 
         # Renderizar todos os cards com tooltip
+        confluence_link = "https://carboncars.atlassian.net/wiki/spaces/CARBON/overview "
+
         for i, (query_name, jql) in enumerate(queries["🤖 AUTOMAÇÕES AP 🤖"].items()):
             response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
             if response.status_code == 200:
                 data = response.json()
                 issue_count = data.get('total', 0)
 
-                # Mensagem de tooltip com link do Confluence
-                tooltip_text = "Testes de monitoria: Link do confluence: "
-                confluence_link = "https://seuempresa.atlassian.net/wiki/home "  # Substitua pelo link correto
-                full_tooltip = f'{tooltip_text}<a href="{confluence_link}" target="_blank">Clique aqui</a>'
+                # Mensagem de tooltip personalizada
+                if query_name == "AP-Sem link de DOC":
+                    tooltip_text = f'{query_name}:\nEstes cards monitoram o AP abaixo segue link do confluence:'
+                    full_tooltip = f'{tooltip_text}<br><a href="{confluence_link}" target="_blank">Clique aqui</a>'
+                elif query_name == "AP-Sem link de VIDRO":
+                    tooltip_text = f'{query_name}:\nEstes cards monitoram o AP abaixo segue link do confluence:'
+                    full_tooltip = f'{tooltip_text}<br><a href="{confluence_link}" target="_blank">Clique aqui</a>'
+                else:
+                    full_tooltip = ""
 
                 # Exibir o card
                 with cols[i % num_columns]:  # Distribuir os cards nas colunas disponíveis
