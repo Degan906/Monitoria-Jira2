@@ -1,5 +1,6 @@
 # V4.1 - 09/04/2025 - Degan
-# Adicionado as JQL de mnonitoria de Labels
+# Adicionado as JQL de monitoria de Labels
+
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
@@ -40,6 +41,7 @@ def buscar_jira(jira_url, email, api_token, jql, max_results=100):
     )
     return response
 
+
 # Interface de login
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
@@ -55,7 +57,7 @@ if not st.session_state.authenticated:
         }
         </style>
         <div class="logo-container">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCx0Ywq0Bhihr0RLdHbBrqyuCsRLoV2KLs2g&s" width="150" height="150">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn :ANd9GcRCx0Ywq0Bhihr0RLdHbBrqyuCsRLoV2KLs2g&s" width="150" height="150">
         </div>
         """, 
         unsafe_allow_html=True
@@ -70,12 +72,13 @@ if not st.session_state.authenticated:
     if st.button("Entrar"):
         if authenticate_user(username, password):
             st.session_state.authenticated = True
-            st.session_state.jira_url = "https://carboncars.atlassian.net"
+            st.session_state.jira_url = "https://carboncars.atlassian.net "
             st.session_state.email = "henrique.degan@oatsolutions.com.br"
             st.session_state.api_token = "b4mAs0sXJCx3101YvgkhBD3F"  # Certifique-se de não expor tokens sensíveis
             st.success("Login bem-sucedido!")
         else:
             st.error("Nome de usuário ou senha incorretos.")
+
 else:
     # Barra de status no topo da tela
     status_bar = st.empty()
@@ -88,7 +91,7 @@ else:
     )
 
     # Adicionando o link clicável
-    st.sidebar.markdown("[Clique aqui para acessar as licenças](https://licencascarbonjira.streamlit.app/)")
+    st.sidebar.markdown("[Clique aqui para acessar as licenças](https://licencascarbonjira.streamlit.app/ )")
 
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")  # Título para a seção de dashboard
@@ -223,7 +226,7 @@ else:
         for col in cols:
             col.empty()
 
-        # Adicionar estilo CSS para o efeito piscante
+        # Adicionar estilo CSS para o efeito piscante + tooltip
         st.markdown("""
         <style>
             @keyframes blink {
@@ -245,38 +248,71 @@ else:
                 justify-content: center;
                 align-items: center;
                 margin: 10px;
+                cursor: help;
+            }
+            .tooltip {
+                position: relative;
+                display: inline-block;
+                cursor: help;
+            }
+            .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 250px;
+                background: #333;
+                color: #fff;
+                text-align: left;
+                border-radius: 4px;
+                padding: 8px 12px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 50%;
+                margin-left: -125px;
+                opacity: 0;
+                transition: opacity 0.3s;
+                font-size: 12px;
+            }
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+                opacity: 1;
             }
         </style>
         """, unsafe_allow_html=True)
 
-        # Renderizar todos os cards
+        # Renderizar todos os cards com tooltip
         for i, (query_name, jql) in enumerate(queries["🤖 AUTOMAÇÕES AP 🤖"].items()):
             response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
             if response.status_code == 200:
                 data = response.json()
-                issue_count = data.get('total', 0)  # Obter o número total de issues
+                issue_count = data.get('total', 0)
+
+                # Mensagem de tooltip com link do Confluence
+                tooltip_text = "Testes de monitoria: Link do confluence: "
+                confluence_link = "https://seuempresa.atlassian.net/wiki/home "  # Substitua pelo link correto
+                full_tooltip = f'{tooltip_text}<a href="{confluence_link}" target="_blank">Clique aqui</a>'
+
                 # Exibir o card
                 with cols[i % num_columns]:  # Distribuir os cards nas colunas disponíveis
                     if issue_count > 0:
-                        # Card com efeito piscante
                         st.markdown(
                             f"""
-                            <div class="blinking-card">
+                            <div class="tooltip blinking-card">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                <span class="tooltiptext">{full_tooltip}</span>
                             </div>
                             """,
                             unsafe_allow_html=True
                         )
                     else:
-                        # Card normal sem efeito
                         st.markdown(
                             f"""
-                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
+                            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                <span class="tooltiptext">{full_tooltip}</span>
                             </div>
                             """,
                             unsafe_allow_html=True
@@ -355,19 +391,3 @@ else:
                 st.info("Nenhuma issue encontrada.")
         else:
             st.error(f"Erro ao buscar dados do Jira: {response.status_code} - {response.text}")
-            # JQL para buscar issues criadas e resolvidas neste mês
-            jql_created = 'created >= startOfMonth() AND project = JSM AND created <= endOfMonth() ORDER BY created DESC'
-            jql_resolved = 'resolutiondate >= startOfMonth() AND project = JSM AND resolutiondate <= endOfMonth() ORDER BY resolutiondate DESC'
-            # Buscar issues criadas
-            response_created = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_created)
-            if response_created.status_code == 200:
-                data_created = response_created.json()
-                total_created = data_created.get('total', 0)
-                issues_created = data_created.get('issues', [])
-            else:
-                st.error(f"Erro ao buscar issues criadas: {response_created.status_code} - {response_created.text}")
-                total_created = 0
-                issues_created = []
-
-            # Buscar issues resolvidas
-            response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token,jql_resolved)
