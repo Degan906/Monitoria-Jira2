@@ -12,6 +12,13 @@ import plotly.express as px
 # Importação da função do Dashboard de Gestão
 from dashboard_gestao import mostrar_dashboard_gestao
 
+# Dicionário de tooltips para cada card
+card_tooltips = {
+    "AP-Sem link de DOC": "Verifica recebimentos sem link de documentação.",
+    "AP-Sem link de VIDRO": "Verifica recebimentos sem link para processo de vidro.",
+     "AP-Sem Link de AÇO": "Verifica recebimentos sem link para processo de aço."
+}
+
 # Configuração da página
 st.set_page_config(page_title="Monitoria", layout="wide")
 
