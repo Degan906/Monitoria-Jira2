@@ -8,6 +8,8 @@ import time
 import pytz
 import pandas as pd
 import plotly.express as px
+import streamlit.components.v1 as components
+
 
 # Importação da função do Dashboard de Gestão
 from dashboard_gestao import mostrar_dashboard_gestao
