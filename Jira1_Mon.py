@@ -16,7 +16,7 @@ from dashboard_gestao import mostrar_dashboard_gestao
 
 # Dicionário de tooltips para cada card
 card_tooltips = {
-    "AP-Sem link de DOC": "Verifica recebimentos sem link de documentação.",
+    "AP-Sem link de DOC": "Verifica recebimentos sem link de documentação 12345.",
     "AP-Sem link de VIDRO": "Verifica recebimentos sem link para processo de vidro.",
     "AP-Sem Link de AÇO": "Verifica recebimentos sem link para processo de aço.",
     "AP-Sem link de MANTA": "Verifica recebimentos sem link para processo de manta.",
