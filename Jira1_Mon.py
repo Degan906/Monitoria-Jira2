@@ -49,6 +49,15 @@ card_tooltips = {
     "Vidros RNC sem Serial": "Verifica RNCs de vidro sem número de serial."
 }
 
+# Dicionário de links para cada card
+card_links = {
+    "AP-Sem link de DOC": "https://carboncars.atlassian.net/issues/?jql=project=AP",
+    "AP-Sem link de VIDRO": "https://confluence.exemplo.com/vidro",
+    "AP-Sem Link de AÇO": "https://confluence.exemplo.com/aco",
+    "PB-Sem link de VL": "https://carboncars.atlassian.net/issues/?jql=project=PB",
+    # Adicione os links reais para os demais cards conforme necessário
+}
+
 # Configuração da página
 st.set_page_config(page_title="Monitoria", layout="wide")
 
@@ -303,6 +312,7 @@ else:
                 data = response.json()
                 issue_count = data.get('total', 0)
                 tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
+                card_link = card_links.get(query_name, "#")  # "#" se não houver link definido
                 
                 with cols[i % num_columns]:
                     if issue_count > 0:
