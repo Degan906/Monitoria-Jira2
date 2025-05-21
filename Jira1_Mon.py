@@ -1,5 +1,5 @@
-# V4.1 - 09/04/2025 - Degan
-# Adicionado as JQL de mnonitoria de Labels
+# V4.1 - 09/04/2025 - Degan (Com Tooltips Funcionais)
+# Adicionado as JQL de monitoria de Labels e tooltips funcionais
 import streamlit as st
 import requests
 from requests.auth import HTTPBasicAuth
@@ -16,11 +16,91 @@ from dashboard_gestao import mostrar_dashboard_gestao
 card_tooltips = {
     "AP-Sem link de DOC": "Verifica recebimentos sem link de documentação.",
     "AP-Sem link de VIDRO": "Verifica recebimentos sem link para processo de vidro.",
-     "AP-Sem Link de AÇO": "Verifica recebimentos sem link para processo de aço."
+    "AP-Sem Link de AÇO": "Verifica recebimentos sem link para processo de aço.",
+    "AP-Sem link de MANTA": "Verifica recebimentos sem link para processo de manta.",
+    "AP-Sem link de SVIDRO": "Verifica recebimentos sem link para suporte de vidro.",
+    "AP-Sem link de PB": "Verifica recebimentos em Produção PB sem link.",
+    "AP - Ag.Ent-Data Exército preenchida": "Verifica recebimentos aguardando entrada com data de Exército preenchida.",
+    "PB-Sem link de VL": "Verifica Produção Blindados sem link de validação.",
+    "PB-Ag. Limpeza QA1": "Verifica PB parados em aguardando limpeza QA1.",
+    "PB-Parado em Ag. Exército": "Verifica PB parados em aguardando Exército.",
+    "PB-Parado em Exército Concluído": "Verifica PB parados em Exército concluído.",
+    "PB-Veículo Finalizado sem Validação": "Verifica veículos finalizados sem validação.",
+    "PB-Passou-131-Exército/TM/aberto": "Verifica PB que passaram para Exército concluído sem validação TM.",
+    "PB-DT.CONTRATO vazia": "Verifica PB sem data de contrato preenchida.",
+    "PB-Prazo Contrato vazia": "Verifica PB sem prazo de contrato preenchido.",
+    "PB-6.3-Finalizar Toyota": "Verifica PB Toyota parados em 6.3 - Finalizar Toyota.",
+    "Compras sem Supply": "Verifica compras sem link de supply chain.",
+    "Monitoria de processo Incidentes": "Verifica incidentes com label de monitoria não resolvidos.",
+    "Incidentes Sistemas": "Verifica incidentes de sistema Jira não resolvidos.",
+    "PB - Sem/Veiculo Marca/Modelo": "Verifica PB sem marca/modelo de veículo.",
+    "AP/PB/VAM - Sem Veiculo": "Verifica cards sem marca/modelo de veículo.",
+    "Pós Venda - Veiculos - Marca/Modelo": "Verifica Pós Venda sem marca/modelo de veículo.",
+    "PBV - Volvo sem Tork's": "Verifica PBV Volvo sem torque de vidro preenchido.",
+    "PB - Instalando Vidro erro": "Verifica PB com status 'Instalando Vidro' mas já resolvidos.",
+    "Vidros done com label": "Verifica AP com processo de vidro done mas com label V.",
+    "Aços done com label": "Verifica AP com processo de aço done mas com label A.",
+    "Mantas done com label": "Verifica AP com processo de manta done mas com label M.",
+    "Tensylon done com label": "Verifica AP com processo de manta done mas com label T.",
+    "Suporte Vidro done com label": "Verifica AP com processo de suporte vidro done mas com label S.",
+    "Pendências sem OS": "Verifica PD sem número de OS preenchido.",
+    "Vidros RNC sem Serial": "Verifica RNCs de vidro sem número de serial."
 }
 
 # Configuração da página
 st.set_page_config(page_title="Monitoria", layout="wide")
+
+# CSS para tooltips e animações
+st.markdown("""
+<style>
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+    }
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+    .blinking-card {
+        animation: blink 1s linear infinite;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+    }
+    @keyframes blink {
+        0% { background-color: #ff3333; }
+        50% { background-color: #ffff99; }
+        100% { background-color: #ff3333; }
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # Dicionário de usuários e senhas
 USERS = {
@@ -70,7 +150,6 @@ if not st.session_state.authenticated:
     username = st.text_input("Usuário")
     password = st.text_input("Senha", type="password")
 
-    # Função de autenticação (corrigida)
     def authenticate_user(username, password):
         return USERS.get(username) == password
 
@@ -79,7 +158,7 @@ if not st.session_state.authenticated:
             st.session_state.authenticated = True
             st.session_state.jira_url = "https://carboncars.atlassian.net"
             st.session_state.email = "henrique.degan@oatsolutions.com.br"
-            st.session_state.api_token = "b4mAs0sXJCx3101YvgkhBD3F"  # Certifique-se de não expor tokens sensíveis
+            st.session_state.api_token = "b4mAs0sXJCx3101YvgkhBD3F"
             st.success("Login bem-sucedido!")
         else:
             st.error("Nome de usuário ou senha incorretos.")
@@ -94,13 +173,12 @@ else:
         ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM", "User List"]
     )
 
-    # Adicionando o link clicável
     st.sidebar.markdown("[Clique aqui para acessar as licenças](https://licencascarbonjira.streamlit.app/)")
 
     if menu_option == "Dash de monitoria":
-        st.title("Dashboard de Monitoria")  # Título para a seção de dashboard
+        st.title("Dashboard de Monitoria")
 
-        # Definir a JQL (movido para antes do uso)
+        # Definir a JQL
         queries = {
             "🤖 AUTOMAÇÕES AP 🤖": {
                 "AP-Sem link de DOC": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01 AND resolved IS EMPTY',
@@ -127,10 +205,6 @@ else:
                 "Pós Venda - Veiculos - Marca/Modelo": 'filter in ("10549") AND project = PV AND issuetype in ("[System] Incident", "Sub-Task - Eletrônica", "Sub-Task - Estética", "Sub-Task - Montagem") AND created >= 2023-08-25 AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
                 "PBV - Volvo sem Tork's": 'project = PBV AND resolution = Done AND "marca[short text]" ~ "VOLVO" AND "modelo[short text]" !~ "EX30 SUV" AND "Modelo[Short text]" !~ "C40 COUPE" AND "Torque Vidro[Radio Buttons]" IS EMPTY ORDER BY created DESC',
                 "PB - Instalando Vidro erro": 'project = "Produção Blindados" AND status = "Instalando Vidro"  AND issueLinkType = "PB > VF" AND issueLinkType = "PB > VM" AND resolution = "Done" ORDER BY created DESC',
-                #"Peças sem Marca/Veiculo": 'project = SUPPLY AND type = "Supply Chain" AND "Request Type (Custom)[Short text]" ~ "Peças Produção" and "Marca[Short text]" IS EMPTY',
-                "Vidro EXPORT": 'project = VIDRO AND type = Vidro AND "blindagem[short text]" ~ "EXPORT" and labels  != 🟢EXPORT',
-                #"Doc sem cliente": 'created >= "2025-03-24" AND project = DOC and "Cliente[Short text]" IS EMPTY and issuetype = "Autorização de Blindagem" and status != Cancelado', #Inativo 09/04/25,
-                #"AP sem cliente": 'project = AP AND type = Recebimento AND status != Cancelado and created >= "2025-03-24" and "Cliente[Short text]" IS EMPTY', #Inativo 09/04/25,
                 "Vidros done com label": 'project = AP and JSW_P-Vidro ~ Done and labels IN (V) AND status != Cancelado and "JSW_RNC-Vidro[Short text]" IS EMPTY',
                 "Aços done com label": 'project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
                 "Mantas done com label": 'project = AP and JSW_P-Manta ~ Done and labels IN (M) AND status != Cancelado',
@@ -144,21 +218,17 @@ else:
         # Criar duas colunas para os botões
         col1, col2 = st.columns(2)
 
-        # Botão de atualização de dados na primeira coluna
         with col1:
             if st.button("Atualizar Dados"):
-                st.cache_data.clear()  # Limpa o cache para forçar a busca de novos dados
-                st.rerun()  # Recarrega a página
+                st.cache_data.clear()
+                st.rerun()
 
-        # Botão para exibir issues alarmadas na segunda coluna
         with col2:
             if st.button("Exibir Issues Alarmadas"):
-                st.session_state.show_alarmed_issues = True  # Ativar a exibição da tabela
+                st.session_state.show_alarmed_issues = True
 
-        # Verificar se o botão foi clicado e exibir a tabela
         if st.session_state.get('show_alarmed_issues', False):
             st.subheader("Issues Alarmadas")
-            # Buscar todas as issues alarmadas
             alarmed_issues = []
             for query_name, jql in queries["🤖 AUTOMAÇÕES AP 🤖"].items():
                 response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
@@ -186,13 +256,12 @@ else:
                                 "Status": status,
                                 "Resolução": resolucao
                             })
-            # Exibir a tabela de issues alarmadas
             if alarmed_issues:
                 df_alarmed = pd.DataFrame(alarmed_issues)
                 st.data_editor(
                     df_alarmed,
                     column_config={
-                        "Chave": st.column_config.LinkColumn("Chave"),  # Transforma a coluna Chave em um link clicável
+                        "Chave": st.column_config.LinkColumn("Chave"),
                         "Criado": st.column_config.DatetimeColumn("Criado", format="DD/MM/YY HH:mm"),
                     },
                     hide_index=True,
@@ -204,14 +273,11 @@ else:
             else:
                 st.info("Nenhuma issue alarmada encontrada.")
 
-        # Espaço reservado para os resultados
         results_placeholder = st.empty()
 
-        # Atualização a cada 5 segundos
         if 'last_update_time' not in st.session_state:
             st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
 
-        # Mostrar barra de status de atualização
         status_bar.markdown(
             f"""
             <div style="background-color: #f0f0f0; padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 10px;">
@@ -221,69 +287,42 @@ else:
             unsafe_allow_html=True
         )
 
-        # Max de 6 colunas
-        max_columns = 6  # Máximo de colunas
+        max_columns = 6
         num_columns = min(len(queries["🤖 AUTOMAÇÕES AP 🤖"]), max_columns)
-        cols = results_placeholder.columns(num_columns)  # Max de 6 colunas
+        cols = results_placeholder.columns(num_columns)
 
-        # Limpar conteúdo anterior
         for col in cols:
             col.empty()
 
-        # Adicionar estilo CSS para o efeito piscante
-        st.markdown("""
-        <style>
-            @keyframes blink {
-                0% { background-color: #ff3333; }
-                50% { background-color: #ffff99; }
-                100% { background-color: #ff3333; }
-            }
-            .blinking-card {
-                animation: blink 1s linear infinite;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                padding: 10px;
-                text-align: center;
-                width: 100%;
-                max-width: 100%;
-                height: auto;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                margin: 10px;
-            }
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Renderizar todos os cards
+        # Renderizar todos os cards com tooltips
         for i, (query_name, jql) in enumerate(queries["🤖 AUTOMAÇÕES AP 🤖"].items()):
             response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
             if response.status_code == 200:
                 data = response.json()
-                issue_count = data.get('total', 0)  # Obter o número total de issues
-                # Exibir o card
-                with cols[i % num_columns]:  # Distribuir os cards nas colunas disponíveis
+                issue_count = data.get('total', 0)
+                tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
+                
+                with cols[i % num_columns]:
                     if issue_count > 0:
-                        # Card com efeito piscante
                         st.markdown(
                             f"""
-                            <div class="blinking-card">
+                            <div class="tooltip blinking-card">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                <span class="tooltiptext">{tooltip_text}</span>
                             </div>
                             """,
                             unsafe_allow_html=True
                         )
                     else:
-                        # Card normal sem efeito
                         st.markdown(
                             f"""
-                            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
+                            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                <span class="tooltiptext">{tooltip_text}</span>
                             </div>
                             """,
                             unsafe_allow_html=True
@@ -291,16 +330,13 @@ else:
             else:
                 st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
 
-        # Atualizar a última data de atualização
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
-        st.write("Aqui estão os dados do dashboard de monitoria...")  # Conteúdo adicional do dashboard
+        st.write("Aqui estão os dados do dashboard de monitoria...")
 
-        # Aguardar 60 segundos antes da próxima atualização
         time.sleep(60)
         st.rerun()
 
     elif menu_option == "Dashs Gestão":
-        # Chamada para o Dashboard de Gestão modularizado
         mostrar_dashboard_gestao(
             jira_url=st.session_state.jira_url,
             email=st.session_state.email,
@@ -310,7 +346,6 @@ else:
 
     elif menu_option == "Relatorio Geral ITSM":
         st.title("Relatorio Geral ITSM")
-        # JQL para buscar issues ordenadas pela data de criação
         jql_fila = 'project = JSM ORDER BY created DESC'
         response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_fila)
         if response.status_code == 200:
@@ -323,13 +358,11 @@ else:
                     chave = f"[{issue['key']}]({st.session_state.jira_url}/browse/{issue['key']})"
                     tipo = fields.get('issuetype', {}).get('name', 'N/A')
                     resumo = fields.get('summary', 'N/A')
-                    # Converter Criado para datetime
                     criado = datetime.strptime(issue['fields']['created'], "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo'))
                     relator = fields.get('reporter', {}).get('displayName', 'N/A')
                     responsavel = fields.get('assignee', {}).get('displayName', 'N/A') if fields.get('assignee') else 'Não atribuído'
-                    # Converter Resolvido para datetime ou usar None se vazio
                     resolvido = datetime.strptime(fields.get('resolutiondate', '1970-01-01T00:00:00.000+0000'), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo')) if fields.get('resolutiondate') else None
-                    status = fields.get('status', {}).get('name', 'N/A')  # Campo Status
+                    status = fields.get('status', {}).get('name', 'N/A')
                     resolucao = fields.get('resolution', {}).get('name', 'N/A') if fields.get('resolution') else 'N/A'
                     table_data.append({
                         "Chave": chave,
@@ -342,39 +375,21 @@ else:
                         "Status": status,
                         "Resolução": resolucao
                     })
-                # Converter para DataFrame
                 df = pd.DataFrame(table_data)
-                # Configurar as colunas para filtros interativos
                 st.data_editor(
                     df,
                     column_config={
-                        "Chave": st.column_config.LinkColumn("Chave"),  # Transforma a coluna Chave em um link clicável
+                        "Chave": st.column_config.LinkColumn("Chave"),
                         "Criado": st.column_config.DatetimeColumn("Criado", format="DD/MM/YY HH:mm"),
                         "Resolvido": st.column_config.DatetimeColumn("Resolvido", format="DD/MM/YY HH:mm"),
                     },
                     hide_index=True,
-                    use_container_width=True,  # Torna a tabela responsiva
-                    num_rows="dynamic",  # Permite paginação e filtros
-                    disabled=True,  # Desabilita edição dos dados
+                    use_container_width=True,
+                    num_rows="dynamic",
+                    disabled=True,
                     column_order=["Chave", "Tipo", "Resumo", "Criado", "Relator", "Responsável", "Resolvido", "Status", "Resolução"]
                 )
             else:
                 st.info("Nenhuma issue encontrada.")
         else:
             st.error(f"Erro ao buscar dados do Jira: {response.status_code} - {response.text}")
-            # JQL para buscar issues criadas e resolvidas neste mês
-            jql_created = 'created >= startOfMonth() AND project = JSM AND created <= endOfMonth() ORDER BY created DESC'
-            jql_resolved = 'resolutiondate >= startOfMonth() AND project = JSM AND resolutiondate <= endOfMonth() ORDER BY resolutiondate DESC'
-            # Buscar issues criadas
-            response_created = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_created)
-            if response_created.status_code == 200:
-                data_created = response_created.json()
-                total_created = data_created.get('total', 0)
-                issues_created = data_created.get('issues', [])
-            else:
-                st.error(f"Erro ao buscar issues criadas: {response_created.status_code} - {response_created.text}")
-                total_created = 0
-                issues_created = []
-
-            # Buscar issues resolvidas
-            response_resolved = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token,jql_resolved)
