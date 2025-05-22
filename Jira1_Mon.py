@@ -16,9 +16,9 @@ from dashboard_gestao import mostrar_dashboard_gestao
 
 # Dicionário de tooltips para cada card
 card_tooltips = {
-    "AP Link DOC": "Card de apontamento quando criado deve ter o link de card documentação AP > DOC",
-    "AP link VIDRO": "Card de apontamento quando criado deve ter o link de card vidro AP > VIDRO",
-    "AP link AÇO": "Verifica recebimentos sem link para processo de aço.",
+    "📄 AP sem DOC": "📦 Busca recebimentos do projeto AP sem nenhum link de documentação do tipo 'ADM-Documentações-AB' ou 'Documentações', criados a partir de 01/05/2024 e ainda não resolvidos. Útil para identificar entregas pendentes de documentação.",
+    "AP link VIDRO": "📦 Verifica recebimentos do projeto AP sem vínculo com o processo de vidro ('P-Vidro'), criados a partir de 01/05/2024 e ainda não resolvidos. Útil para garantir que todas as entregas tenham o processo de vidro associado.",
+    "AP link AÇO": "📦 Verifica recebimentos do projeto AP sem vínculo com o processo de aço ('P-Aço'), criados a partir de 01/05/2024 e ainda não resolvidos. Ajuda a identificar entregas sem o processo de aço vinculado.",
     "AP-Sem link de MANTA": "Verifica recebimentos sem link para processo de manta.",
     "AP-Sem link de SVIDRO": "Verifica recebimentos sem link para suporte de vidro.",
     "AP-Sem link de PB": "Verifica recebimentos em Produção PB sem link.",
@@ -192,7 +192,7 @@ else:
         # Definir a JQL
         queries = {
             "🤖 AUTOMAÇÕES AP 🤖": {
-                "AP link DOC": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01 AND resolved IS EMPTY',
+               "📄 AP sem DOC": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "AP link VIDRO": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Vidro) AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "AP link AÇO": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Aço) AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "AP link MANTA": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Manta) AND created >= 2024-05-01 AND resolved IS EMPTY',
