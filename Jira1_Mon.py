@@ -51,9 +51,42 @@ card_tooltips = {
 
 # Dicionário de links para cada card
 card_links = {
-   "⏫ Aço c/label": 'https://carboncars.atlassian.net/issues/?jql=project=PB',
-   "🔼 Incidentes Jira": "https://carboncars.atlassian.net/issues/?jql=project%20IN%20(JSM%2C%20SUPORTE)%20AND%20type%20IN%20(%22%5BSystem%5D%20Incident%22)%20AND%20resolution%20%3D%20Unresolved%20and%20statusCategory%20%3D%20%22To%20Do%22%20and%20Sistema%20%3D%20Jira"
-    
+   "⏫ Aço c/label":"https ",
+   "⏫ AP sem AÇO":"https ",
+   "⏫ Ap Link Doc":"https ",
+   "⏫ Ap Link Manta":"https ",
+   "⏫ Ap Link Pb":"https ",
+   "⏫ Ap Link Svidro":"https ",
+   "⏫ Ap Link Vidro":"https ",
+   "⏫ Compras Supply":"https ",
+   "⏫ Mantas Label":"https ",
+   "⏫ Incidentes Proc":"https ",
+   "⏫ Pb Instalando":"https ",
+   "⏫ Pb Link Vl":"https ",
+   "⏫ Pb Contrato":"https ",
+   "⏫ Pb Ag Exercito":"https ",
+   "⏫ Pb Exercito Ok":"https ",
+   "⏫ Pb Final Sem Val":"https ",
+   "⏫ Volvo Sem Tork":"https ",
+   "⏫ Pendencia Sem Os":"https ",
+   "⏫ Svidro Label":"https ",
+   "⏫ Tensylon Label":"https ",
+   "⏫ Vidros Label":"https ",
+   "⏫ Rnc Sem Serial":"https ",
+   "🔼 Ap Data Exercito":"https ",
+   "🔼 Incidentes Jira":"https://carboncars.atlassian.net/issues/?jql=project%20IN%20(JSM%2C%20SUPORTE)%20AND%20type%20IN%20(%22%5BSystem%5D%20Incident%22)%20AND%20resolution%20%3D%20Unresolved%20and%20statusCategory%20%3D%20%22To%20Do%22%20and%20Sistema%20%3D%20Jira",
+   "🔼 Pb Passou 131":"https ",
+   "🔼 Pb Prazo Contr":"https ",
+   "🔽 Ap Pb Sem Veic":"https ",
+   "🔽 Pb Sem Veiculo":"https ",
+   "🔽 Pb Ag Limpeza":"https ",
+   "🔽 Pb Final Toyota":"https ",
+   "🔽 Posvenda Marca":"https ",
+   
+
+
+
+   
     # Adicione os links reais para os demais cards conforme necessário
 }
 
