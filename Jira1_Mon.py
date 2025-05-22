@@ -308,43 +308,39 @@ else:
 
         # Renderizar todos os cards com tooltips
         for i, (query_name, jql) in enumerate(queries["🤖 AUTOMAÇÕES AP 🤖"].items()):
-            response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
-            if response.status_code == 200:
-                data = response.json()
-                issue_count = data.get('total', 0)
-                tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
-                card_link = card_links.get(query_name, "#")  # "#" se não houver link definido
-                
-                with cols[i % num_columns]:
-                    if issue_count > 0:
-                        st.markdown(
-                            f"""
-                            <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
-                                <div class="tooltip blinking-card">
-                                    <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
-                                    <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
-                                    <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
-                                    <span class="tooltiptext">{tooltip_text}</span>
-                                </div>
-                            </a>
-                            """,
-                            unsafe_allow_html=True
-                        )
-
-                    else:
-                        st.markdown(
-                            f"""
-                            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
-                                <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
-                                <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
-                                <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
-                                <span class="tooltiptext">{tooltip_text}</span>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-            else:
-                st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
+             response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
+             if response.status_code == 200:
+                 data = response.json()
+                 issue_count = data.get('total', 0)
+                 tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
+                 card_link = card_links.get(query_name, "#")
+         
+                 with cols[i % num_columns]:
+                     background = (
+                         '<div class="blinking-card">'
+                         if issue_count > 0 else
+                         '<div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; '
+                         'width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; '
+                         'justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">'
+                     )
+         
+                     st.markdown(
+                         f"""
+                         <div class="tooltip">
+                             <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
+                                 {background}
+                                     <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
+                                     <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
+                                     <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                 </div>
+                             </a>
+                             <span class="tooltiptext">{tooltip_text}</span>
+                         </div>
+                         """,
+                         unsafe_allow_html=True
+                     )
+             else:
+                 st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
 
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
         st.write("Aqui estão os dados do dashboard de monitoria...")
