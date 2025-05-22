@@ -61,57 +61,55 @@ card_links = {
 # Configuração da página
 st.set_page_config(page_title="Monitoria", layout="wide")
 
-# CSS para tooltips e animações
+# Adição do botão de ajuda ❓ com tooltip
 st.markdown("""
 <style>
-    .tooltip {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-    }
-    .tooltip .tooltiptext {
-        visibility: hidden;
-        width: 200px;
-        background-color: #555;
-        color: #fff;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px;
-        position: absolute;
-        z-index: 1;
-        bottom: 125%;
-        left: 50%;
-        margin-left: -100px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        font-size: 12px;
-    }
-    .tooltip:hover .tooltiptext {
-        visibility: visible;
-        opacity: 1;
-    }
-    .blinking-card {
-        animation: blink 1s linear infinite;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
-        text-align: center;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin: 10px;
-    }
-    @keyframes blink {
-        0% { background-color: #ff3333; }
-        50% { background-color: #ffff99; }
-        100% { background-color: #ff3333; }
-    }
+.help-icon {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 24px;
+    color: #888;
+    z-index: 10;
+}
+
+.help-icon .tooltiptext {
+    visibility: hidden;
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 11;
+    top: -5px;
+    right: 110%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+}
+
+.help-icon:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
 </style>
+
+<div class="help-icon">
+    ❓
+    <div class="tooltiptext">
+        Este painel exibe cards com alertas baseados em JQLs.<br><br>
+        ✔️ Passe o mouse sobre os cards para ver explicações.<br>
+        📋 Clique em "Exibir Issues Alarmadas" para visualizar os detalhes.<br>
+        🔄 Use "Atualizar Dados" para recarregar os resultados.
+    </div>
+</div>
 """, unsafe_allow_html=True)
+
+# Título da página
+st.title("Dashboard de Monitoria")
 
 # Dicionário de usuários e senhas
 USERS = {
