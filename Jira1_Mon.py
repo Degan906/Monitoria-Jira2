@@ -51,10 +51,10 @@ card_tooltips = {
 
 # Dicionário de links para cada card
 card_links = {
-   "⏫ Aço c/label":"https ",
-   "⏫ AP sem AÇO":"https ",
-   "⏫ Ap Link Doc":"https ",
-   "⏫ Ap Link Manta":"https ",
+   "⏫ Aço c/label": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20%22JSW_P-A%C3%A7o%22%20~%20%22Done%22%20AND%20labels%20IN%20%28A%29%20AND%20status%20%21%3D%20Cancelado",
+   "⏫ AP sem AÇO": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20issuetype%20%3D%20Recebimento%20AND%20issueLinkType%20NOT%20IN%20%28%22P-A%C3%A7o%22%29%20AND%20created%20%3E%3D%20%222024-05-01%22%20AND%20resolved%20IS%20EMPTY",
+   "⏫ Ap Link Doc": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20issuetype%20%3D%20Recebimento%20AND%20issueLinkType%20NOT%20IN%20%28%22ADM-Documenta%C3%A7%C3%B5es-AB%22%2C%20%22Documenta%C3%A7%C3%B5es%22%29%20AND%20created%20%3E%3D%20%222024-05-01%22%20AND%20resolved%20IS%20EMPTY",
+   "⏫ Ap Link Manta": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20issuetype%20IS%20NOT%20EMPTY%20AND%20issueLinkType%20IS%20NOT%20EMPTY%20AND%20created%20%3E%3D%20%222024-05-01%22%20AND%20resolved%20IS%20EMPTY",
    "⏫ Ap Link Pb":"https ",
    "⏫ Ap Link Svidro":"https ",
    "⏫ Ap Link Vidro":"https ",
