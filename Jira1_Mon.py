@@ -314,99 +314,95 @@ else:
         )
 
         with results_placeholder:
-    st.markdown('<div class="card-container">', unsafe_allow_html=True)
-
-    for query_name, jql in queries["🤖 AUTOMAÇÕES AP 🤖"].items():
-        response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
-        if response.status_code == 200:
-            data = response.json()
-            issue_count = data.get('total', 0)
-            tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
-            card_link = card_links.get(query_name, "#")
-
-            blinking_class = "card blinking-card" if issue_count > 0 else "card"
-
-            st.markdown(
-                f"""
-                <div class="tooltip">
-                    <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
-                        <div class="{blinking_class}">
-                            <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
-                            <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
-                            <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
-                        </div>
-                    </a>
-                    <span class="tooltiptext">{tooltip_text}</span>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-             else:
-                 st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
-
-        st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
-        st.write("Aqui estão os dados do dashboard de monitoria...")
-
-        time.sleep(60)
-        st.rerun()
-
-    elif menu_option == "Dashs Gestão":
-        mostrar_dashboard_gestao(
-            jira_url=st.session_state.jira_url,
-            email=st.session_state.email,
-            api_token=st.session_state.api_token,
-            buscar_jira=buscar_jira
-        )
-
-    elif menu_option == "Relatorio Geral ITSM":
-        st.title("Relatorio Geral ITSM")
-        jql_fila = 'project = JSM ORDER BY created DESC'
-        response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_fila)
-        if response.status_code == 200:
-            data = response.json()
-            issues = data.get('issues', [])
-            if issues:
-                table_data = []
-                for issue in issues:
-                    fields = issue.get('fields', {})
-                    chave = f"[{issue['key']}]({st.session_state.jira_url}/browse/{issue['key']})"
-                    tipo = fields.get('issuetype', {}).get('name', 'N/A')
-                    resumo = fields.get('summary', 'N/A')
-                    criado = datetime.strptime(issue['fields']['created'], "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo'))
-                    relator = fields.get('reporter', {}).get('displayName', 'N/A')
-                    responsavel = fields.get('assignee', {}).get('displayName', 'N/A') if fields.get('assignee') else 'Não atribuído'
-                    resolvido = datetime.strptime(fields.get('resolutiondate', '1970-01-01T00:00:00.000+0000'), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo')) if fields.get('resolutiondate') else None
-                    status = fields.get('status', {}).get('name', 'N/A')
-                    resolucao = fields.get('resolution', {}).get('name', 'N/A') if fields.get('resolution') else 'N/A'
-                    table_data.append({
-                        "Chave": chave,
-                        "Tipo": tipo,
-                        "Resumo": resumo,
-                        "Criado": criado,
-                        "Relator": relator,
-                        "Responsável": responsavel,
-                        "Resolvido": resolvido,
-                        "Status": status,
-                        "Resolução": resolucao
-                    })
-                df = pd.DataFrame(table_data)
-                st.data_editor(
-                    df,
-                    column_config={
-                        "Chave": st.column_config.LinkColumn("Chave"),
-                        "Criado": st.column_config.DatetimeColumn("Criado", format="DD/MM/YY HH:mm"),
-                        "Resolvido": st.column_config.DatetimeColumn("Resolvido", format="DD/MM/YY HH:mm"),
-                    },
-                    hide_index=True,
-                    use_container_width=True,
-                    num_rows="dynamic",
-                    disabled=True,
-                    column_order=["Chave", "Tipo", "Resumo", "Criado", "Relator", "Responsável", "Resolvido", "Status", "Resolução"]
-                )
-            else:
-                st.info("Nenhuma issue encontrada.")
-        else:
-            st.error(f"Erro ao buscar dados do Jira: {response.status_code} - {response.text}")
+          st.markdown('<div class="card-container">', unsafe_allow_html=True)
+          for query_name, jql in queries["🤖 AUTOMAÇÕES AP 🤖"].items():
+              response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
+              if response.status_code == 200:
+                  data = response.json()
+                  issue_count = data.get('total', 0)
+                  tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
+                  card_link = card_links.get(query_name, "#")
+      
+                  blinking_class = "card blinking-card" if issue_count > 0 else "card"
+      
+                  st.markdown(
+                      f"""
+                      <div class="tooltip">
+                          <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
+                              <div class="{blinking_class}">
+                                  <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
+                                  <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
+                                  <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                              </div>
+                          </a>
+                          <span class="tooltiptext">{tooltip_text}</span>
+                      </div>
+                      """,
+                      unsafe_allow_html=True
+                  )
+                   else:
+                       st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
+               st.markdown('</div>', unsafe_allow_html=True)
+                 st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
+                 st.write("Aqui estão os dados do dashboard de monitoria...")
+         
+                 time.sleep(60)
+                 st.rerun()
+         
+             elif menu_option == "Dashs Gestão":
+                 mostrar_dashboard_gestao(
+                     jira_url=st.session_state.jira_url,
+                     email=st.session_state.email,
+                     api_token=st.session_state.api_token,
+                     buscar_jira=buscar_jira
+                 )
+         
+             elif menu_option == "Relatorio Geral ITSM":
+                 st.title("Relatorio Geral ITSM")
+                 jql_fila = 'project = JSM ORDER BY created DESC'
+                 response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql_fila)
+                 if response.status_code == 200:
+                     data = response.json()
+                     issues = data.get('issues', [])
+                     if issues:
+                         table_data = []
+                         for issue in issues:
+                             fields = issue.get('fields', {})
+                             chave = f"[{issue['key']}]({st.session_state.jira_url}/browse/{issue['key']})"
+                             tipo = fields.get('issuetype', {}).get('name', 'N/A')
+                             resumo = fields.get('summary', 'N/A')
+                             criado = datetime.strptime(issue['fields']['created'], "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo'))
+                             relator = fields.get('reporter', {}).get('displayName', 'N/A')
+                             responsavel = fields.get('assignee', {}).get('displayName', 'N/A') if fields.get('assignee') else 'Não atribuído'
+                             resolvido = datetime.strptime(fields.get('resolutiondate', '1970-01-01T00:00:00.000+0000'), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo')) if fields.get('resolutiondate') else None
+                             status = fields.get('status', {}).get('name', 'N/A')
+                             resolucao = fields.get('resolution', {}).get('name', 'N/A') if fields.get('resolution') else 'N/A'
+                             table_data.append({
+                                 "Chave": chave,
+                                 "Tipo": tipo,
+                                 "Resumo": resumo,
+                                 "Criado": criado,
+                                 "Relator": relator,
+                                 "Responsável": responsavel,
+                                 "Resolvido": resolvido,
+                                 "Status": status,
+                                 "Resolução": resolucao
+                             })
+                         df = pd.DataFrame(table_data)
+                         st.data_editor(
+                             df,
+                             column_config={
+                                 "Chave": st.column_config.LinkColumn("Chave"),
+                                 "Criado": st.column_config.DatetimeColumn("Criado", format="DD/MM/YY HH:mm"),
+                                 "Resolvido": st.column_config.DatetimeColumn("Resolvido", format="DD/MM/YY HH:mm"),
+                             },
+                             hide_index=True,
+                             use_container_width=True,
+                             num_rows="dynamic",
+                             disabled=True,
+                             column_order=["Chave", "Tipo", "Resumo", "Criado", "Relator", "Responsável", "Resolvido", "Status", "Resolução"]
+                         )
+                     else:
+                         st.info("Nenhuma issue encontrada.")
+                 else:
+                     st.error(f"Erro ao buscar dados do Jira: {response.status_code} - {response.text}")
