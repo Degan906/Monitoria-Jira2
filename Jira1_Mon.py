@@ -69,42 +69,56 @@ st.markdown("""
         display: inline-block;
         cursor: pointer;
     }
+
     .tooltip .tooltiptext {
         visibility: hidden;
-        width: 200px;
+        width: 220px;
         background-color: #555;
         color: #fff;
-        text-align: center;
+        text-align: left;
         border-radius: 6px;
-        padding: 5px;
+        padding: 8px;
         position: absolute;
         z-index: 1;
-        bottom: 125%;
+        bottom: 130%;
         left: 50%;
-        margin-left: -100px;
+        margin-left: -110px;
         opacity: 0;
         transition: opacity 0.3s;
         font-size: 12px;
     }
+
     .tooltip:hover .tooltiptext {
         visibility: visible;
         opacity: 1;
     }
-    .blinking-card {
-        animation: blink 1s linear infinite;
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: flex-start;
+    }
+
+    .card {
+        width: 150px;
+        height: 100px;
         border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
+        border-radius: 6px;
+        padding: 6px;
         text-align: center;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin: 10px;
+        background-color: #fff;
+        transition: background-color 0.3s;
     }
+
+    .blinking-card {
+        animation: blink 1s linear infinite;
+    }
+
     @keyframes blink {
         0% { background-color: #ff3333; }
         50% { background-color: #ffff99; }
@@ -299,46 +313,37 @@ else:
             unsafe_allow_html=True
         )
 
-        max_columns = 6
-        num_columns = min(len(queries["🤖 AUTOMAÇÕES AP 🤖"]), max_columns)
-        cols = results_placeholder.columns(num_columns)
+        with results_placeholder:
+    st.markdown('<div class="card-container">', unsafe_allow_html=True)
 
-        for col in cols:
-            col.empty()
+    for query_name, jql in queries["🤖 AUTOMAÇÕES AP 🤖"].items():
+        response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
+        if response.status_code == 200:
+            data = response.json()
+            issue_count = data.get('total', 0)
+            tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
+            card_link = card_links.get(query_name, "#")
 
-        # Renderizar todos os cards com tooltips
-        for i, (query_name, jql) in enumerate(queries["🤖 AUTOMAÇÕES AP 🤖"].items()):
-             response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
-             if response.status_code == 200:
-                 data = response.json()
-                 issue_count = data.get('total', 0)
-                 tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
-                 card_link = card_links.get(query_name, "#")
-         
-                 with cols[i % num_columns]:
-                     background = (
-                         '<div class="blinking-card">'
-                         if issue_count > 0 else
-                         '<div style="border: 1px solid #ddd; border-radius: 5px; padding: 5px; text-align: center; width: 150px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px;" '
-                         'width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; '
-                         'justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">'
-                     )
-         
-                     st.markdown(
-                         f"""
-                         <div class="tooltip">
-                             <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
-                                 {background}
-                                     <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
-                                     <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
-                                     <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
-                                 </div>
-                             </a>
-                             <span class="tooltiptext">{tooltip_text}</span>
-                         </div>
-                         """,
-                         unsafe_allow_html=True
-                     )
+            blinking_class = "card blinking-card" if issue_count > 0 else "card"
+
+            st.markdown(
+                f"""
+                <div class="tooltip">
+                    <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
+                        <div class="{blinking_class}">
+                            <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
+                            <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
+                            <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                        </div>
+                    </a>
+                    <span class="tooltiptext">{tooltip_text}</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
              else:
                  st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
 
