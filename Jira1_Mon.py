@@ -52,7 +52,7 @@ card_tooltips = {
 # Dicionário de links para cada card
 card_links = {
    "⏫ Aço c/label": "https://carboncars.atlassian.net/issues/?jql=project=PB",
-   "🔼 Incidentes Jira": "https://carboncars.atlassian.net/issues/?jql=project IN (JSM, SUPORTE) AND type IN ("[System] Incident") AND resolution = Unresolved and statusCategory = "To Do" and Sistema = Jira",
+   "🔼 Incidentes Jira": "https://carboncars.atlassian.net/jira/servicedesk/projects/SUPORTE/queues/custom/700",
     "AP-Sem link de VIDRO": "https://confluence.exemplo.com/vidro",
     "AP-Sem Link de AÇO": "https://confluence.exemplo.com/aco",
     "PB-Sem link de VL": "https://carboncars.atlassian.net/issues/?jql=project=PB",
