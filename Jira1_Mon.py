@@ -188,7 +188,7 @@ else:
 
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")
-        st.markdown("📄 **Link Confluence:** [https://carboncars.atlassian.net/wiki/spaces/CARBON/overview](https://carboncars.atlassian.net/wiki/spaces/CARBON/overview)")
+        st.markdown("📄 [Link Confluence](https://carboncars.atlassian.net/wiki/spaces/CARBON/overview)")
 
         # Definir a JQL
         queries = {
