@@ -51,7 +51,7 @@ card_tooltips = {
 
 # Dicionário de links para cada card
 card_links = {
-    "AP-Sem link de DOC": "https://carboncars.atlassian.net/issues/?jql=project=AP",
+   "⏫ Aço c/label": 'project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
     "AP-Sem link de VIDRO": "https://confluence.exemplo.com/vidro",
     "AP-Sem Link de AÇO": "https://confluence.exemplo.com/aco",
     "PB-Sem link de VL": "https://carboncars.atlassian.net/issues/?jql=project=PB",
