@@ -16,8 +16,8 @@ from dashboard_gestao import mostrar_dashboard_gestao
 
 # Dicionário de tooltips para cada card
 card_tooltips = {
-   "🔴 Aço c/label": 'project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
-   "🔴 AP sem AÇO": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Aço) AND created >= 2024-05-01 AND resolved IS EMPTY',
+   "🔴 Aço c/label": 'Verifica se há issues no projeto AP com o campo JSW_P-Aço marcado como "Done", com o label "A", e que ainda não foram canceladas. Útil para monitorar entregas finalizadas com etiqueta de aço. JQL: project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
+   "🔴 AP sem Aço": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Aço) AND created >= 2024-05-01 AND resolved IS EMPTY',
    "🔴 Ap Link Doc": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01 AND resolved IS EMPTY',
    "🔴 Ap Link Manta": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Manta) AND created >= 2024-05-01 AND resolved IS EMPTY',
    "🔴 Ap Link Pb": 'project = AP AND issuetype = Recebimento AND status = "Produção PB" AND issueLinkType not in ("PB - Produção Blindados") AND created >= 2024-05-01 AND resolved IS EMPTY',
@@ -193,7 +193,7 @@ else:
         queries = {
             "🤖 AUTOMAÇÕES AP 🤖": {
                 "🔴 Aço c/label": 'project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
-                "🔴 AP sem AÇO": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Aço) AND created >= 2024-05-01 AND resolved IS EMPTY',
+                "🔴 AP sem Aço": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Aço) AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "🔴 Ap Link Doc": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "🔴 Ap Link Manta": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Manta) AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "🔴 Ap Link Pb": 'project = AP AND issuetype = Recebimento AND status = "Produção PB" AND issueLinkType not in ("PB - Produção Blindados") AND created >= 2024-05-01 AND resolved IS EMPTY',
