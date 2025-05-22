@@ -9,13 +9,19 @@ import pytz
 import pandas as pd
 import plotly.express as px
 import streamlit.components.v1 as components
-
-
 # Importação da função do Dashboard de Gestão
 from dashboard_gestao import mostrar_dashboard_gestao
 
 # Dicionário de tooltips para cada card
 card_tooltips = {
+    "Versão": """
+        <b>V4.7 - 09/04/2025 - Degan</b><br>
+        <ul>
+            <li>Adicionadas JQLs de monitoria de Labels</li>
+            <li>Tooltips funcionais adicionados para cada card</li>
+            <li>Melhorias na interface e organização do código</li>
+        </ul>
+    """,
    "⏫ Aço c/label": 'Verifica se há issues no projeto AP com o campo JSW_P-Aço marcado como "Done", com o label "A", e que ainda não foram canceladas. Útil para monitorar entregas finalizadas com etiqueta de aço. JQL: project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
    "⏫ AP sem Aço": 'Verifica recebimentos no projeto AP que ainda estão em aberto (não resolvidos), foram criados após 01/05/2024 e que não possuem link com o tipo de item "P-Aço". Serve para identificar chamados que ainda não foram vinculados ao processo de aço. JQL: project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Aço) AND created >= 2024-05-01 AND resolved IS EMPTY',
    "⏫ Ap Link Doc": 'Verifica recebimentos no projeto AP, criados após 01/05/2024 e ainda não resolvidos, que não possuem vínculo com os tipos de documentação "ADM-Documentações-AB" ou "Documentações". Útil para identificar chamados sem documentação obrigatória. JQL: project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01 AND resolved IS EMPTY',
@@ -51,10 +57,10 @@ card_tooltips = {
 
 # Dicionário de links para cada card
 card_links = {
-    "AP-Sem link de DOC": "https://carboncars.atlassian.net/issues/?jql=project=AP",
-    "AP-Sem link de VIDRO": "https://confluence.exemplo.com/vidro",
-    "AP-Sem Link de AÇO": "https://confluence.exemplo.com/aco",
-    "PB-Sem link de VL": "https://carboncars.atlassian.net/issues/?jql=project=PB",
+    "AP-Sem link de DOC": "https://carboncars.atlassian.net/issues/?jql=project=AP ",
+    "AP-Sem link de VIDRO": "https://confluence.exemplo.com/vidro ",
+    "AP-Sem Link de AÇO": "https://confluence.exemplo.com/aco ",
+    "PB-Sem link de VL": "https://carboncars.atlassian.net/issues/?jql=project=PB ",
     # Adicione os links reais para os demais cards conforme necessário
 }
 
@@ -141,7 +147,6 @@ def buscar_jira(jira_url, email, api_token, jql, max_results=100):
 # Interface de login
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
-
 if not st.session_state.authenticated:
     st.title("Login")
     st.markdown(
@@ -153,21 +158,19 @@ if not st.session_state.authenticated:
         }
         </style>
         <div class="logo-container">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCx0Ywq0Bhihr0RLdHbBrqyuCsRLoV2KLs2g&s" width="150" height="150">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn :ANd9GcRCx0Ywq0Bhihr0RLdHbBrqyuCsRLoV2KLs2g&s" width="150" height="150">
         </div>
         """, 
         unsafe_allow_html=True
     )
     username = st.text_input("Usuário")
     password = st.text_input("Senha", type="password")
-
     def authenticate_user(username, password):
         return USERS.get(username) == password
-
     if st.button("Entrar"):
         if authenticate_user(username, password):
             st.session_state.authenticated = True
-            st.session_state.jira_url = "https://carboncars.atlassian.net"
+            st.session_state.jira_url = "https://carboncars.atlassian.net "
             st.session_state.email = "henrique.degan@oatsolutions.com.br"
             st.session_state.api_token = "b4mAs0sXJCx3101YvgkhBD3F"
             st.success("Login bem-sucedido!")
@@ -176,15 +179,13 @@ if not st.session_state.authenticated:
 else:
     # Barra de status no topo da tela
     status_bar = st.empty()
-
     # Menu lateral
     st.sidebar.title("Menu")
     menu_option = st.sidebar.selectbox(
         "Escolha uma opção:",
         ["Dash de monitoria", "Dashs Gestão", "Relatorio Geral ITSM", "User List"]
     )
-
-    st.sidebar.markdown("[Clique aqui para acessar as licenças](https://licencascarbonjira.streamlit.app/)")
+    st.sidebar.markdown("[Clique aqui para acessar as licenças](https://licencascarbonjira.streamlit.app/ )")
 
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")
@@ -228,12 +229,10 @@ else:
 
         # Criar duas colunas para os botões
         col1, col2 = st.columns(2)
-
         with col1:
             if st.button("Atualizar Dados"):
                 st.cache_data.clear()
                 st.rerun()
-
         with col2:
             if st.button("Exibir Issues Alarmadas"):
                 st.session_state.show_alarmed_issues = True
@@ -301,9 +300,22 @@ else:
         max_columns = 6
         num_columns = min(len(queries["🤖 AUTOMAÇÕES AP 🤖"]), max_columns)
         cols = results_placeholder.columns(num_columns)
-
         for col in cols:
             col.empty()
+
+        # Adicionar card de Versão com tooltip
+        versao_nome = "V4.7"
+        tooltip_versao = card_tooltips.get("Versão", "Sem descrição disponível")
+
+        with cols[len(queries["🤖 AUTOMAÇÕES AP 🤖"]) % num_columns]:
+            st.markdown(f"""
+            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #e6f0ff;">
+                <h5 style="font-size: 12px; margin: 0; padding: 0;">Versão Atual</h5>
+                <h2 style="font-size: 20px; margin: 0; padding: 0;">{versao_nome}</h2>
+                <span style="font-size: 12px; margin: 0; padding: 0;">Passe o mouse para ver detalhes</span>
+                <span class="tooltiptext">{tooltip_versao}</span>
+            </div>
+            """, unsafe_allow_html=True)
 
         # Renderizar todos os cards com tooltips
         for i, (query_name, jql) in enumerate(queries["🤖 AUTOMAÇÕES AP 🤖"].items()):
@@ -313,7 +325,6 @@ else:
                 issue_count = data.get('total', 0)
                 tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
                 card_link = card_links.get(query_name, "#")  # "#" se não houver link definido
-                
                 with cols[i % num_columns]:
                     if issue_count > 0:
                         st.markdown(
@@ -344,7 +355,6 @@ else:
 
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
         st.write("Aqui estão os dados do dashboard de monitoria...")
-
         time.sleep(60)
         st.rerun()
 
