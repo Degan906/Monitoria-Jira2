@@ -292,7 +292,7 @@ else:
         status_bar.markdown(
             f"""
             <div style="background-color: #f0f0f0; padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 10px;">
-                <strong>Última atualização:</strong> {st.session_state.last_update_time}
+                <strong>Última atualização:</strong> {st.session_state.last_update_time} <strong>V4.7</strong>
             </div>
             """,
             unsafe_allow_html=True
