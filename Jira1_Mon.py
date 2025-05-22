@@ -1,4 +1,4 @@
-# V4.7 - 09/04/2025 - Degan (Com Tooltips Funcionais)
+ƒ# V4.7 - 09/04/2025 - Degan (Com Tooltips Funcionais)
 # Adicionado as JQL de monitoria de Labels e tooltips funcionais
 import streamlit as st
 import requests
@@ -319,7 +319,7 @@ else:
                      background = (
                          '<div class="blinking-card">'
                          if issue_count > 0 else
-                         '<div style="border: 1px solid #ddd; border-radius: 5px; padding: 5px; text-align: center; width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px;" '
+                         '<div style="border: 1px solid #ddd; border-radius: 5px; padding: 5px; text-align: center; width: 150px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px;" '
                          'width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; '
                          'justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">'
                      )
