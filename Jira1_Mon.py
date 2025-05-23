@@ -304,7 +304,7 @@ else:
                                 <div class="tooltip blinking-card">
                                     <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                     <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
-                                    <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                    #<span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
                                     <span class="tooltiptext">{tooltip_text}</span>
                                 </div>
                             </a>
