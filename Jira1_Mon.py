@@ -95,6 +95,42 @@ st.set_page_config(page_title="Monitoria", layout="wide")
 # CSS para tooltips e animações
 st.markdown("""
 <style>
+@media (prefers-color-scheme: dark) {
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #222;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+    }
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+    .blinking-card {
+        animation: blink 1s linear infinite;
+        border: 1px solid #555;
+        background-color: #330000;
+        color: #fff;
+    }
+}
+
+@media (prefers-color-scheme: light) {
     .tooltip {
         position: relative;
         display: inline-block;
@@ -124,25 +160,19 @@ st.markdown("""
     .blinking-card {
         animation: blink 1s linear infinite;
         border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
-        text-align: center;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin: 10px;
+        background-color: #ff3333;
+        color: #000;
     }
-    @keyframes blink {
-        0% { background-color: #ff3333; }
-        50% { background-color: #ffff99; }
-        100% { background-color: #ff3333; }
-    }
+}
+
+@keyframes blink {
+    0% { background-color: #ff3333; }
+    50% { background-color: #ffff99; }
+    100% { background-color: #ff3333; }
+}
 </style>
 """, unsafe_allow_html=True)
+
 
 # Dicionário de usuários e senhas
 USERS = {
