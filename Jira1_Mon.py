@@ -273,7 +273,7 @@ else:
 
         status_bar.markdown(
             f"""
-            <div style="background-color: #f0f0f0; padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 10px;">
+            <div style="background-color: #c9c9c9; padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 10px;">
                 <strong>Última atualização:</strong> {st.session_state.last_update_time} <strong>V4.7</strong>
             </div>
             """,
@@ -315,7 +315,7 @@ else:
                     else:
                         st.markdown(
                             f"""
-                            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #f7f7f7;">
+                            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #c9c9c9;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
