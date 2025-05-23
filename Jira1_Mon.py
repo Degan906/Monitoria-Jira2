@@ -304,7 +304,7 @@ else:
                                 <div class="tooltip blinking-card">
                                     <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                     <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
-                                    #<span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                    <span style="font-size: 12px; margin: 0; padding: 0;"
                                     <span class="tooltiptext">{tooltip_text}</span>
                                 </div>
                             </a>
@@ -318,7 +318,7 @@ else:
                             <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #c9c9c9;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
-                                #<span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
+                                <span style="font-size: 12px; margin: 0; padding: 0;"
                                 <span class="tooltiptext">{tooltip_text}</span>
                             </div>
                             """,
