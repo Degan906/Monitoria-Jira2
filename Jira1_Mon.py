@@ -222,6 +222,12 @@ else:
         st.title("Dashboard de Monitoria")
         st.markdown("🔗 [Link Confluence](https://carboncars.atlassian.net/wiki/spaces/CARBON/overview)")
 
+    if 'alarm_counters' not in st.session_state:
+        st.session_state.alarm_counters = {}
+
+       
+       
+
         # Definir a JQL
         queries = {
             "🤖 AUTOMAÇÕES AP 🤖": {
@@ -345,10 +351,20 @@ else:
                 data = response.json()
                 issue_count = data.get('total', 0)
                 tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
-                card_link = card_links.get(query_name, "#")  # "#" se não houver link definido
-                
-                with cols[i % num_columns]:
-                    if issue_count > 0:
+                card_link = card_links.get(query_name, "#")
+
+                # Controle de alarmes consecutivos
+                if query_name not in st.session_state.alarm_counters:
+                    st.session_state.alarm_counters[query_name] = 0
+
+                if issue_count > 0:
+                    st.session_state.alarm_counters[query_name] += 1
+                else:
+                    st.session_state.alarm_counters[query_name] = 0
+
+                # Só renderiza o card alarmado se foi maior que 0 por 3 vezes seguidas
+                if st.session_state.alarm_counters[query_name] >= 3:
+                    with cols[i % num_columns]:
                         st.markdown(
                             f"""
                             <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
@@ -362,8 +378,8 @@ else:
                             """,
                             unsafe_allow_html=True
                         )
-
-                    else:
+                else:
+                    with cols[i % num_columns]:
                         st.markdown(
                             f"""
                             <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
@@ -377,6 +393,7 @@ else:
                         )
             else:
                 st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
+
 
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
         st.write("Aqui estão os dados do dashboard de monitoria...")
