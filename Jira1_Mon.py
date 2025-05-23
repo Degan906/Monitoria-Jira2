@@ -380,8 +380,9 @@ else:
 
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
         st.write("Aqui estão os dados do dashboard de monitoria...")
-
-        time.sleep(30)
+        
+        #Atualizacao da pagina por segundos
+        time.sleep(10)
         st.rerun()
 
     elif menu_option == "Dashs Gestão":
