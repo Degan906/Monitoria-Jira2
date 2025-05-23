@@ -353,46 +353,36 @@ else:
                 tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
                 card_link = card_links.get(query_name, "#")
 
-                # Controle de alarmes consecutivos
+                # Inicializa contagem se ainda não existir
                 if query_name not in st.session_state.alarm_counters:
                     st.session_state.alarm_counters[query_name] = 0
 
+                # Atualiza a contagem
                 if issue_count > 0:
                     st.session_state.alarm_counters[query_name] += 1
                 else:
                     st.session_state.alarm_counters[query_name] = 0
 
-                # Só renderiza o card alarmado se foi maior que 0 por 3 vezes seguidas
-                if st.session_state.alarm_counters[query_name] >= 3:
-                    with cols[i % num_columns]:
-                        st.markdown(
-                            f"""
-                            <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
-                                <div class="tooltip blinking-card">
-                                    <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
-                                    <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
-                                    <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
-                                    <span class="tooltiptext">{tooltip_text}</span>
-                                </div>
-                            </a>
-                            """,
-                            unsafe_allow_html=True
-                        )
-                else:
-                    with cols[i % num_columns]:
-                        st.markdown(
-                            f"""
-                            <div class="tooltip" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px; background-color: #ffffff;">
+                # Define estilo do card: com ou sem piscar
+                card_class = "blinking-card" if st.session_state.alarm_counters[query_name] >= 3 else ""
+
+                with cols[i % num_columns]:
+                    st.markdown(
+                        f"""
+                        <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
+                            <div class="tooltip {card_class}" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
                                 <span class="tooltiptext">{tooltip_text}</span>
                             </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
+                        </a>
+                        """,
+                        unsafe_allow_html=True
+                    )
             else:
                 st.error(f"Erro ao buscar dados do Jira para {query_name}: {response.status_code} - {response.text}")
+
 
 
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
