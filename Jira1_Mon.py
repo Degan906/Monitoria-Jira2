@@ -353,24 +353,26 @@ else:
                 tooltip_text = card_tooltips.get(query_name, "Sem descrição disponível")
                 card_link = card_links.get(query_name, "#")
 
-                # Inicializa contagem se ainda não existir
+                # Controle da contagem
+                if 'alarm_counters' not in st.session_state:
+                    st.session_state.alarm_counters = {}
+
                 if query_name not in st.session_state.alarm_counters:
                     st.session_state.alarm_counters[query_name] = 0
 
-                # Atualiza a contagem
                 if issue_count > 0:
                     st.session_state.alarm_counters[query_name] += 1
                 else:
                     st.session_state.alarm_counters[query_name] = 0
 
-                # Define estilo do card: com ou sem piscar
-                card_class = "blinking-card" if st.session_state.alarm_counters[query_name] >= 3 else ""
+                # Define classe de estilo (com ou sem piscar)
+                blink_class = "blinking-card" if st.session_state.alarm_counters[query_name] >= 3 else ""
 
                 with cols[i % num_columns]:
                     st.markdown(
                         f"""
                         <a href="{card_link}" target="_blank" style="text-decoration: none; color: inherit;">
-                            <div class="tooltip {card_class}" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px;">
+                            <div class="tooltip {blink_class}" style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; width: 100%; max-width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px;">
                                 <h5 style="font-size: 12px; margin: 0; padding: 0;">{query_name}</h5>
                                 <h2 style="font-size: 20px; margin: 0; padding: 0;">{issue_count}</h2>
                                 <span style="font-size: 12px; margin: 0; padding: 0;">Total de Tickets</span>
