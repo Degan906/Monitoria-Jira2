@@ -1,4 +1,3 @@
-# V4.7 - 09/04/2025 - Degan (Com Tooltips Funcionais)
 # Adicionado as JQL de monitoria de Labels e tooltips funcionais
 import streamlit as st
 import requests
@@ -154,8 +153,8 @@ USERS = {
 }
 
 # Função para buscar dados no Jira
-@st.cache_data(ttl=60)  # Cache com tempo de vida de 60 segundos
-def buscar_jira(jira_url, email, api_token, jql, max_results=100):
+@st.cache_data(ttl=10)  # Cache com tempo de vida de 60 segundos
+def buscar_jira(jira_url, email, api_token, jql, max_results=10):
     headers = {
         "Accept": "application/json"
     }
@@ -267,56 +266,6 @@ else:
                 st.cache_data.clear()
                 st.rerun()
 
-        with col2:
-            if st.button("Exibir Issues Alarmadas"):
-                st.session_state.show_alarmed_issues = True
-
-        if st.session_state.get('show_alarmed_issues', False):
-            st.subheader("Issues Alarmadas")
-            alarmed_issues = []
-            for query_name, jql in queries["🤖 AUTOMAÇÕES AP 🤖"].items():
-                response = buscar_jira(st.session_state.jira_url, st.session_state.email, st.session_state.api_token, jql)
-                if response.status_code == 200:
-                    data = response.json()
-                    issues = data.get('issues', [])
-                    if issues:
-                        for issue in issues:
-                            fields = issue.get('fields', {})
-                            chave = f"{st.session_state.jira_url}/browse/{issue['key']}"
-                            tipo = fields.get('issuetype', {}).get('name', 'N/A')
-                            resumo = fields.get('summary', 'N/A')
-                            criado = datetime.strptime(fields.get('created', ''), "%Y-%m-%dT%H:%M:%S.%f%z").astimezone(pytz.timezone('America/Sao_Paulo'))
-                            relator = fields.get('reporter', {}).get('displayName', 'N/A')
-                            responsavel = fields.get('assignee', {}).get('displayName', 'N/A') if fields.get('assignee') else 'Não atribuído'
-                            status = fields.get('status', {}).get('name', 'N/A')
-                            resolucao = fields.get('resolution', {}).get('name', 'N/A') if fields.get('resolution') else 'N/A'
-                            alarmed_issues.append({
-                                "Chave": chave,
-                                "Tipo": tipo,
-                                "Resumo": resumo,
-                                "Criado": criado,
-                                "Relator": relator,
-                                "Responsável": responsavel,
-                                "Status": status,
-                                "Resolução": resolucao
-                            })
-            if alarmed_issues:
-                df_alarmed = pd.DataFrame(alarmed_issues)
-                st.data_editor(
-                    df_alarmed,
-                    column_config={
-                        "Chave": st.column_config.LinkColumn("Chave"),
-                        "Criado": st.column_config.DatetimeColumn("Criado", format="DD/MM/YY HH:mm"),
-                    },
-                    hide_index=True,
-                    use_container_width=True,
-                    num_rows="dynamic",
-                    disabled=True,
-                    column_order=["Chave", "Tipo", "Resumo", "Criado", "Relator", "Responsável", "Status", "Resolução"]
-                )
-            else:
-                st.info("Nenhuma issue alarmada encontrada.")
-
         results_placeholder = st.empty()
 
         if 'last_update_time' not in st.session_state:
@@ -380,8 +329,9 @@ else:
 
         st.session_state.last_update_time = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
         st.write("Aqui estão os dados do dashboard de monitoria...")
-
-        time.sleep(30)
+        
+        #Atualizacao da pagina por segundos
+        time.sleep(10)
         st.rerun()
 
     elif menu_option == "Dashs Gestão":
