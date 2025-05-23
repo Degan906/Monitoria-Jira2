@@ -1,4 +1,3 @@
-# V4.7 - 09/04/2025 - Degan (Com Tooltips Funcionais)
 # Adicionado as JQL de monitoria de Labels e tooltips funcionais
 import streamlit as st
 import requests
