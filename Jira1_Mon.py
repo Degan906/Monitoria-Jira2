@@ -83,11 +83,8 @@ card_links = {
    "🔽 Pb Ag Limpeza":"https://carboncars.atlassian.net/issues/?jql=project%20%3D%20PB%20and%20status%20%3D%20%22135%20-%20Aguardando%20Limpeza%20QA1%22%20and%20type%20%3D%20%22Produ%C3%A7%C3%A3o%20Blindados%22 ",
    "🔽 Pb Final Toyota":"https://carboncars.atlassian.net/issues/?jql=filter%20in%20%28%2210549%22%29%20AND%20issuetype%20%3D%20%22Produ%C3%A7%C3%A3o%20Blindados%22%20AND%20status%20%3D%20%226.3%20-%20Finalizar%20Toyota%22%20AND%20%22Tag%20Toyota%22%20%3D%20TOYOTA ",
    "🔽 Posvenda Marca":"https://carboncars.atlassian.net/issues/?jql=Est%C3%A9tica%22%2C%20%22Sub-Task%20-%20Montagem%22%29%20AND%20created%20%3E%3D%202023-08-25%20AND%20%22Veiculo%20-%20Marca%2FModelo%5BShort%20text%5D%22%20is%20EMPTY%20AND%20resolution%20%3D%20Unresolved ",
-   "🔽 Opera != Opera":"https://carboncars.atlassian.net/issues/?jql=created%20>%3D%202025-05-01%20AND%20project%20%3D%20SUPPLY%20AND%20type%20%3D%20"Supply%20Chain"%20AND%20"empresa%5Bdropdown%5D"%20in%20%28"Opera%20Jarinu%20%28HG%29"%2C%20"Carbon%20Jarinu"%29%20%20AND%20level%20%21%3D%20"Compras%20HG ",
+   "🔽 Opera != Opera":"https://carboncars.atlassian.net/issues/?jql=created%20%3E%3D%202025-05-01%20AND%20project%20%3D%20SUPPLY%20AND%20type%20%3D%20%22Supply%20Chain%22%20AND%20%22empresa%5Bdropdown%5D%22%20in%20%28%22Opera%20Jarinu%20%28HG%29%22%2C%20%22Carbon%20Jarinu%22%29%20%20AND%20level%20%21%3D%20%22Compras%20HG%22 ",
    "🔽 RNC != Vidro":"https://carboncars.atlassian.net/issues/?filter=13401&jql=project%20%3D%20RNC%20and%20status%20%3D%20%22Em%20Produ%C3%A7%C3%A3o%20Carbon%22%20and%20issuelinktype%20not%20in%20%28%22RNC%20%3E%20Vidro%22%29",
-
-
-
    
     # Adicione os links reais para os demais cards conforme necessário
 }
