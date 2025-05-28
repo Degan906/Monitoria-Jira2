@@ -48,6 +48,7 @@ card_tooltips = {
    "🔽 Posvenda Marca": 'Monitora chamados no projeto PV, filtrados pelo ID "10549", criados a partir de 25/08/2023, dos tipos "[System] Incident", "Sub-Task - Eletrônica", "Sub-Task - Estética" e "Sub-Task - Montagem", que estão sem o preenchimento do campo "Veiculo - Marca/Modelo" e permanecem não resolvidos. Serve para identificar registros de pós-venda sem associação a um veículo. JQL: filter in ("10549") AND project = PV AND issuetype in ("[System] Incident", "Sub-Task - Eletrônica", "Sub-Task - Estética", "Sub-Task - Montagem") AND created >= 2023-08-25 AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
    "🔽 Opera != Opera": 'Busca por todas as issues do tipo "Supply Chain" criadas a partir de 1º de maio de 2025 no projeto SUPPLY, pertencentes à empresa "Opera Jarinu (HG)" e que não estão associadas ao nível "Compras HG".',
    "🔽 Carbon Jarinu = Opera": 'Essa JQL busca todas as issues do tipo "Supply Chain" criadas a partir de 1º de maio de 2025 no projeto SUPPLY, pertencentes à empresa "Carbon Jarinu" e associadas ao nível "Compras HG"',
+   "🔽 RNC != Vidro": 'Busca todas as issues do projeto RNC que estão no status "Em Produção Carbon" e não estão vinculadas com o tipo de link "RNC > Vidro"',
 }
 
 # Dicionário de links para cada card
@@ -85,6 +86,7 @@ card_links = {
    "🔽 Posvenda Marca":"https://carboncars.atlassian.net/issues/?jql=Est%C3%A9tica%22%2C%20%22Sub-Task%20-%20Montagem%22%29%20AND%20created%20%3E%3D%202023-08-25%20AND%20%22Veiculo%20-%20Marca%2FModelo%5BShort%20text%5D%22%20is%20EMPTY%20AND%20resolution%20%3D%20Unresolved ",
    "🔽 Opera != Opera":"https://carboncars.atlassian.net/issues/?jql=created%20%3E%3D%202025-05-01%20AND%20project%20%3D%20SUPPLY%20AND%20type%20%3D%20%22Supply%20Chain%22%20AND%20%22empresa%5Bdropdown%5D%22%20%3D%20%22Opera%20Jarinu%20%28HG%29%22%20AND%20level%20%21%3D%20%22Compras%20HG%22%0A",
    "🔽 Carbon Jarinu = Opera":"https://carboncars.atlassian.net/issues/?jql=created%20%3E%3D%202025-05-01%20AND%20project%20%3D%20SUPPLY%20AND%20type%20%3D%20%22Supply%20Chain%22%20AND%20%22empresa%5Bdropdown%5D%22%20%3D%20%22Carbon%20Jarinu%22%20AND%20level%20%3D%20%22Compras%20HG%22%0A",
+   "🔽 RNC != Vidro":"https://carboncars.atlassian.net/issues/?filter=13401&jql=project%20%3D%20RNC%20and%20status%20%3D%20%22Em%20Produ%C3%A7%C3%A3o%20Carbon%22%20and%20issuelinktype%20not%20in%20%28%22RNC%20%3E%20Vidro%22%29",
 
 
 
@@ -260,6 +262,7 @@ else:
                 "🔽 Posvenda Marca": 'filter in ("10549") AND project = PV AND issuetype in ("[System] Incident", "Sub-Task - Eletrônica", "Sub-Task - Estética", "Sub-Task - Montagem") AND created >= 2023-08-25 AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
                 "🔽 Opera != Opera": 'created >= 2025-05-01 AND project = SUPPLY AND type = "Supply Chain" AND "empresa[dropdown]" = "Opera Jarinu (HG)" AND level != "Compras HG"',
                 "🔽 Carbon Jarinu = Opera": 'created >= 2025-05-01 AND project = SUPPLY AND type = "Supply Chain" AND "empresa[dropdown]" = "Carbon Jarinu" AND level = "Compras HG"',
+                "🔽 RNC != Vidro": 'project = RNC and status = "Em Produção Carbon" and issuelinktype not in ("RNC > Vidro")',
             },
         }
 
