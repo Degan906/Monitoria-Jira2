@@ -255,7 +255,7 @@ else:
                 "🔽 Pb Ag Limpeza": 'project = PB and status = "135 - Aguardando Limpeza QA1" and type = "Produção Blindados"',
                 "🔽 Pb Final Toyota": 'filter in ("10549") AND issuetype = "Produção Blindados" AND status = "6.3 - Finalizar Toyota" AND "Tag Toyota" = TOYOTA',
                 "🔽 Posvenda Marca": 'filter in ("10549") AND project = PV AND issuetype in ("[System] Incident", "Sub-Task - Eletrônica", "Sub-Task - Estética", "Sub-Task - Montagem") AND created >= 2023-08-25 AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
-                "🔽 Opera != Opera": 'created >= 2025-05-01 AND project = SUPPLY AND type = "Supply Chain" AND "empresa[dropdown]" in ("Opera Jarinu (HG)", "Carbon Jarinu")  AND level != "Compras HG"',
+                "🔽 Opera != Opera": 'created >= 2025-05-01 AND project = SUPPLY AND type = "Supply Chain" AND "empresa[dropdown]" in ("Opera Jarinu (HG)")  AND level != "Compras HG"',
                 "🔽 RNC != Vidro": 'project = RNC and status = "Em Produção Carbon" and issuelinktype not in ("RNC > Vidro")',
             },
         }
