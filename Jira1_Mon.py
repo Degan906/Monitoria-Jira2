@@ -85,7 +85,7 @@ card_links = {
    "🔽 Pb Final Toyota":"https://carboncars.atlassian.net/issues/?jql=filter%20in%20%28%2210549%22%29%20AND%20issuetype%20%3D%20%22Produ%C3%A7%C3%A3o%20Blindados%22%20AND%20status%20%3D%20%226.3%20-%20Finalizar%20Toyota%22%20AND%20%22Tag%20Toyota%22%20%3D%20TOYOTA ",
    "🔽 Posvenda Marca":"https://carboncars.atlassian.net/issues/?jql=Est%C3%A9tica%22%2C%20%22Sub-Task%20-%20Montagem%22%29%20AND%20created%20%3E%3D%202023-08-25%20AND%20%22Veiculo%20-%20Marca%2FModelo%5BShort%20text%5D%22%20is%20EMPTY%20AND%20resolution%20%3D%20Unresolved ",
    "🔽 Opera != Opera":"https://carboncars.atlassian.net/issues/?jql=created%20%3E%3D%202025-05-01%20AND%20project%20%3D%20SUPPLY%20AND%20type%20%3D%20%22Supply%20Chain%22%20AND%20%22empresa%5Bdropdown%5D%22%20in%20%28%22Opera%20Jarinu%20%28HG%29%22%2C%20%22Carbon%20Jarinu%22%29%20%20AND%20level%20%21%3D%20%22Compras%20HG%22 ",
-   "🔽 RNC != Vidro":"https://carboncars.atlassian.net/issues/?jql=created%20%3E%3D%202025-05-01%20AND%20project%20%3D%20SUPPLY%20AND%20%22empresa%5Bdropdown%5D%22%20in%20%28%22Opera%20Jarinu%20%28HG%29%22%2C%20%22Carbon%20Jarinu%22%29%20AND%20level%20%21%3D%20%22Compras%20HG%22",
+   "🔽 RNC != Vidro":"https://carboncars.atlassian.net/issues/?jql=created%20%3E%3D%202025-05-01%20AND%20project%20%3D%20SUPPLY%20AND%20type%20%3D%20%22Supply%20Chain%22%20AND%20%22empresa%5Bdropdown%5D%22%20in%20%28%22Opera%20Jarinu%20%28HG%29%22%2C%20%22Carbon%20Jarinu%22%2C%22High%20Glass%22%29%20%20AND%20level%20%21%3D%20%22Compras%20HG%22%20OR%20created%20%3E%3D%202025-05-01%20AND%20project%20%3D%20SUPPLY%20AND%20type%20%3D%20%22Supply%20Chain%22%20AND%20%22empresa%5Bdropdown%5D%22%20%3D%20Vertco%20AND%20level%20%21%3D%20%22Compras%20Vertco%22",
    "🔽 TI - Opera":"https://carboncars.atlassian.net/issues/?jql=project%20%3D%20TI%20AND%20%22empresa%5Bdropdown%5D%22%20IN%20%28%22High%20Glass%22%2C%20%22Opera%20Jarinu%20%28HG%29%22%29%20AND%20level%20NOT%20IN%20%28HG%2CVERTCO%29%20and%20resolution%20%3D%20Unresolved"
    
     # Adicione os links reais para os demais cards conforme necessário
@@ -257,7 +257,7 @@ else:
                 "🔽 Pb Ag Limpeza": 'project = PB and status = "135 - Aguardando Limpeza QA1" and type = "Produção Blindados"',
                 "🔽 Pb Final Toyota": 'filter in ("10549") AND issuetype = "Produção Blindados" AND status = "6.3 - Finalizar Toyota" AND "Tag Toyota" = TOYOTA',
                 "🔽 Posvenda Marca": 'filter in ("10549") AND project = PV AND issuetype in ("[System] Incident", "Sub-Task - Eletrônica", "Sub-Task - Estética", "Sub-Task - Montagem") AND created >= 2023-08-25 AND "Veiculo - Marca/Modelo[Short text]" is EMPTY AND resolution = Unresolved',
-                "🔽 Opera != Opera": 'created >= 2025-05-01 AND project = SUPPLY AND "empresa[dropdown]" in ("Opera Jarinu (HG)", "Carbon Jarinu") AND level != "Compras HG"',
+                "🔽 Opera != Opera": 'created >= 2025-05-01 AND project = SUPPLY AND type = "Supply Chain" AND "empresa[dropdown]" in ("Opera Jarinu (HG)", "Carbon Jarinu","High Glass")  AND level != "Compras HG" OR created >= 2025-05-01 AND project = SUPPLY AND type = "Supply Chain" AND "empresa[dropdown]" = Vertco AND level != "Compras Vertco"',
                 "🔽 RNC != Vidro": 'project = RNC and status = "Em Produção Carbon" and issuelinktype not in ("RNC > Vidro")',
                 "🔽 TI - Opera": 'project = TI AND "empresa[dropdown]" IN ("High Glass", "Opera Jarinu (HG)") AND level NOT IN (HG,VERTCO) and resolution = Unresolved',
             },
