@@ -235,7 +235,7 @@ else:
                 "⏫ Ap Link Pb": 'project = AP AND issuetype = Recebimento AND status = "Produção PB" AND issueLinkType not in ("PB - Produção Blindados") AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "⏫ Ap Link Svidro": 'project = AP AND issuetype = Recebimento AND status != Cancelado AND issueLinkType not in ("P-Suporte Vidro") AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "⏫ Ap Link Vidro": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Vidro) AND created >= 2024-05-01 AND resolved IS EMPTY',
-                "⏫ Compras Supply": 'project = COM AND created >= "2023-07-01" AND issueLinkType != "Supply Chain"',
+                "⏫ Compras Supply": 'project = COM and issuelinktype is empty and created >= "2023-07-01" and status CHANGED TO open',
                 "⏫ Mantas Label": 'project = AP and JSW_P-Manta ~ Done and labels IN (M) AND status != Cancelado',
                 "⏫ Incidentes Proc": 'project IN (JSM, SUPORTE) AND type IN ("[System] Incident", Monitoria) AND resolution = Unresolved AND labels = ⚠️MONITORIA⚠️ and statusCategory = "To Do"',
                 "⏫ Pb Instalando": 'project = "Produção Blindados" AND status = "Instalando Vidro" AND issueLinkType = "PB > VF" AND issueLinkType = "PB > VM" AND resolution = "Done" ORDER BY created DESC',
