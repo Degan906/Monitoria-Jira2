@@ -226,7 +226,15 @@ else:
 
     if menu_option == "Dash de monitoria":
         st.title("Dashboard de Monitoria")
+        # Exibe link do Confluence
         st.markdown("🔗 [Link Confluence](https://carboncars.atlassian.net/wiki/spaces/CARBON/overview)")
+
+        # Contador de monitorias ativas
+         st.markdown(f"""
+         <div style="background-color: #f0f0f0; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 15px; font-size: 16px;">
+             🔍 <strong>Estão sendo monitorados ({len(queries["🤖 AUTOMAÇÕES AP 🤖"])}) ambientes.</strong>
+         </div>
+         """, unsafe_allow_html=True)
 
         # Definir a JQL
         queries = {
