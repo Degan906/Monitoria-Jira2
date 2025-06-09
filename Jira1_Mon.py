@@ -15,7 +15,7 @@ from dashboard_gestao import mostrar_dashboard_gestao
 
 # Dicionário de tooltips para cada card
 card_tooltips = {
-   "⏫ Aço c/label": 'Verifica se há issues no projeto AP com o campo JSW_P-Aço marcado como "Done", com o label "A", e que ainda não foram canceladas. Útil para monitorar entregas finalizadas com etiqueta de aço. JQL: project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
+   #"⏫ Aço c/label": 'Verifica se há issues no projeto AP com o campo JSW_P-Aço marcado como "Done", com o label "A", e que ainda não foram canceladas. Útil para monitorar entregas finalizadas com etiqueta de aço. JQL: project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
    "⏫ AP sem Aço": 'Verifica recebimentos no projeto AP que ainda estão em aberto (não resolvidos), foram criados após 01/05/2024 e que não possuem link com o tipo de item "P-Aço". Serve para identificar chamados que ainda não foram vinculados ao processo de aço. JQL: project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Aço) AND created >= 2024-05-01 AND resolved IS EMPTY',
    "⏫ Ap Link Doc": 'Verifica recebimentos no projeto AP, criados após 01/05/2024 e ainda não resolvidos, que não possuem vínculo com os tipos de documentação "ADM-Documentações-AB" ou "Documentações". Útil para identificar chamados sem documentação obrigatória. JQL: project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01 AND resolved IS EMPTY',
    "⏫ Ap Link Manta": 'Verifica recebimentos no projeto AP que foram criados após 01/05/2024, ainda não resolvidos, e que não possuem vínculo com o tipo de item "P-Manta". Serve para identificar chamados que não estão conectados ao processo de manta. JQL: project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Manta) AND created >= 2024-05-01 AND resolved IS EMPTY',
@@ -56,7 +56,7 @@ card_tooltips = {
 
 # Dicionário de links para cada card
 card_links = {
-   "⏫ Aço c/label": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20%22JSW_P-A%C3%A7o%22%20~%20%22Done%22%20AND%20labels%20IN%20%28A%29%20AND%20status%20%21%3D%20Cancelado",
+   #"⏫ Aço c/label": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20%22JSW_P-A%C3%A7o%22%20~%20%22Done%22%20AND%20labels%20IN%20%28A%29%20AND%20status%20%21%3D%20Cancelado",
    "⏫ AP sem AÇO": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20issuetype%20%3D%20Recebimento%20AND%20issueLinkType%20NOT%20IN%20%28%22P-A%C3%A7o%22%29%20AND%20created%20%3E%3D%20%222024-05-01%22%20AND%20resolved%20IS%20EMPTY",
    "⏫ Ap Link Doc": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20issuetype%20%3D%20Recebimento%20AND%20issueLinkType%20NOT%20IN%20%28%22ADM-Documenta%C3%A7%C3%B5es-AB%22%2C%20%22Documenta%C3%A7%C3%B5es%22%29%20AND%20created%20%3E%3D%20%222024-05-01%22%20AND%20resolved%20IS%20EMPTY",
    "⏫ Ap Link Manta": "https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20AND%20issuetype%20IS%20NOT%20EMPTY%20AND%20issueLinkType%20IS%20NOT%20EMPTY%20AND%20created%20%3E%3D%20%222024-05-01%22%20AND%20resolved%20IS%20EMPTY",
@@ -231,7 +231,7 @@ else:
         # Definir a JQL
         queries = {
             "🤖 AUTOMAÇÕES AP 🤖": {
-                "⏫ Aço c/label": 'project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
+                #"⏫ Aço c/label": 'project = AP and JSW_P-Aço ~ Done and labels IN (A) AND status != Cancelado',
                 "⏫ AP sem Aço": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Aço) AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "⏫ Ap Link Doc": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (ADM-Documentações-AB, Documentações) AND created >= 2024-05-01 AND resolved IS EMPTY',
                 "⏫ Ap Link Manta": 'project = AP AND issuetype = Recebimento AND issueLinkType not in (P-Manta) AND created >= 2024-05-01 AND resolved IS EMPTY',
