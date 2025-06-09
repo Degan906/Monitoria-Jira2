@@ -269,7 +269,7 @@ else:
                 "⏫ TI - Opera": 'project = TI AND "empresa[dropdown]" IN ("High Glass", "Opera Jarinu (HG)") AND level NOT IN (HG,VERTCO) and resolution = Unresolved',
                 "⏫ Compras Parados": 'resolution = Unresolved AND project = COM AND status IN ("Aguardando aprovação Diretoria", "Aguardando Comite") and "Request Type" in ("Vidros (COM)", "RNC (COM)", "Assistência Técnica-Vidros (COM)", "MP e Insumos - Opera") or resolution = Unresolved AND project = COM AND status IN ("Aguardando aprovação Diretoria", "Aguardando Comite")   and "Empresa[Dropdown]" = "Carbon Assistência"',
                 "⏫ Laudos Concluídos PB": 'project = PB and status changed from "12 - Aguardando Validações" to "132.1 - Laudo Concluído" and status = "132.1 - Laudo Concluído"',
-                "⏫ PB Finalizados": 'project = PB and status = "114.2 - Finalizado Preparação Entrega"',
+                "⏫ PB Finalizados": 'project = PB and status = "114.2 - Finalizado Preparação Entrega"'
  
             },
         }
