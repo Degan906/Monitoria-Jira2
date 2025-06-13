@@ -279,7 +279,7 @@ else:
                 "⏫ PB Finalizados": 'project = PB and status = "114.2 - Finalizado Preparação Entrega" AND "JSW_P-Validação (TM) - Done" is NOT EMPTY',
                 "⏫ Vidro s/DT.Contrato": 'project = VIDRO and statusCategory != Done and "DT. LIBERAÇÃO EX." is not empty and "DT.CONTRATO[Date]" is empty',
                 "⏫ AP c/ link PB s/ dt. contrato": 'project = AP and statusCategory != Done and issuelinktype = "PB - Produção Blindados" and "DT.CONTRATO[Date]" is empty',
-                "⏫ AP Cancel c/PB": 'project = AP and status = Cancelado  AND issueLinkType = "PB - Produção Blindados" and "JSW_PB - Produção Blindados[Short text]" !~ Cancelado-> project = AP and status = Cancelado  AND issueLinkType = "PB - Produção Blindados" and "JSW_PB - Produção Blindados[Short text]" !~ Cancelado',
+                "⏫ AP Cancel c/PB": 'project = AP and status = Cancelado  AND issueLinkType = "PB - Produção Blindados" and "JSW_PB - Produção Blindados[Short text]" !~ Cancelado',
                
             },
         }
