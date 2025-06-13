@@ -53,7 +53,8 @@ card_tooltips = {
    "⏫ Laudos Concluídos PB": 'Essa JQL identifica issues do projeto PB que tiveram o status alterado de "12 - Aguardando Validações" para "132.1 - Laudo Concluído" e que atualmente permanecem nesse status.',
    "⏫ PB Finalizados": 'PB parado em 114.2 - Finalizado Preparação e Entrega - Deveria sair do 114.2 e ir para o 140 - Aguardando Repasse de Saída JQL: project = PB and status = "114.2 - Finalizado Preparação Entrega"',
    "⏫ Vidro s/DT.Contrato": 'pproject = VIDRO and statusCategory != Done and "DT. LIBERAÇÃO EX." is not empty and "DT.CONTRATO[Date]" is empty',
-   "⏫ AP c/ link PB s/ dt. contrato": 'project = AP and statusCategory != Done and issuelinktype = "PB - Produção Blindados" and "DT.CONTRATO[Date]" is empty'
+   "⏫ AP c/ link PB s/ dt. contrato": 'project = AP and statusCategory != Done and issuelinktype = "PB - Produção Blindados" and "DT.CONTRATO[Date]" is empty',
+   "⏫ AP Cancel c/PB": 'Esta JQL identifica todas as issues do projeto AP que estão com o status Cancelado, mas que ainda possuem um vínculo do tipo "PB - Produção Blindados" com outra issue cujo campo "JSW_PB - Produção Blindados" não indica cancelamento. Isso permite detectar inconsistências onde uma AP foi cancelada, mas sua respectiva PB ainda segue ativa.'
 }
 
 # Dicionário de links para cada card
@@ -97,6 +98,8 @@ card_links = {
    "⏫ PB Finalizados":"https://carboncars.atlassian.net/issues/?jql=project%20%3D%20COM%20AND%20status%20IN%20%28%22Aguardando%20aprova%C3%A7%C3%A3o%20Diretoria%22%2C%20%22Aguardando%20Comite%22%29%20AND%20%22diretor%20respons%C3%A1vel%5Buser%20picker%20%28single%20user%29%5D%22%20%3D%20empty%20or%20resolution%20%3D%20Unresolved%20AND%20project%20%3D%20COM%20AND%20status%20IN%20%28%22Aguardando%20aprova%C3%A7%C3%A3o%20Diretoria%22%2C%20%22Aguardando%20Comite%22%29%20and%20%22Request%20Type%22%20in%20%28%22Vidros%20%28COM%29%22%2C%20%22RNC%20%28COM%29%22%2C%20%22Assist%C3%AAncia%20T%C3%A9cnica-Vidros%20%28COM%29%22%2C%20%22MP%20e%20Insumos%20-%20Opera%22%29%20or%20project%20%3D%20COM%20AND%20resolution%20%3D%20Unresolved%20AND%20project%20%3D%20COM%20AND%20status%20IN%20%28%22Aguardando%20aprova%C3%A7%C3%A3o%20Diretoria%22%2C%20%22Aguardando%20Comite%22%29%20%20%20and%20%22Empresa%5BDropdown%5D%22%20%3D%20%22Carbon%20Assist%C3%AAncia%22",
    "⏫ Vidro s/DT.Contrato":"https://carboncars.atlassian.net/issues/?jql=project%20%3D%20VIDRO%20and%20statusCategory%20%21%3D%20Done%20and%20%22DT.%20LIBERA%C3%87%C3%83O%20EX.%22%20is%20not%20empty%20and%20%22DT.CONTRATO%5BDate%5D%22%20is%20empty",
    "⏫ AP c/ link PB s/ dt. contrato":"https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20and%20statusCategory%20%21%3D%20Done%20and%20issuelinktype%20%3D%20%22PB%20-%20Produ%C3%A7%C3%A3o%20Blindados%22%20and%20%22DT.CONTRATO%5BDate%5D%22%20is%20empty",
+   "⏫ AP Cancel c/PB":"https://carboncars.atlassian.net/issues/?jql=project%20%3D%20AP%20and%20status%20%3D%20Cancelado%20%20AND%20issueLinkType%20%3D%20%22PB%20-%20Produ%C3%A7%C3%A3o%20Blindados%22%20and%20%22JSW_PB%20-%20Produ%C3%A7%C3%A3o%20Blindados%5BShort%20text%5D%22%20%21~%20Cancelado"
+
 
    
     # Adicione os links reais para os demais cards conforme necessário
@@ -276,6 +279,8 @@ else:
                 "⏫ PB Finalizados": 'project = PB and status = "114.2 - Finalizado Preparação Entrega" AND "JSW_P-Validação (TM) - Done" is NOT EMPTY',
                 "⏫ Vidro s/DT.Contrato": 'project = VIDRO and statusCategory != Done and "DT. LIBERAÇÃO EX." is not empty and "DT.CONTRATO[Date]" is empty',
                 "⏫ AP c/ link PB s/ dt. contrato": 'project = AP and statusCategory != Done and issuelinktype = "PB - Produção Blindados" and "DT.CONTRATO[Date]" is empty',
+                "⏫ AP Cancel c/PB": 'project = AP and status = Cancelado  AND issueLinkType = "PB - Produção Blindados" and "JSW_PB - Produção Blindados[Short text]" !~ Cancelado-> project = AP and status = Cancelado  AND issueLinkType = "PB - Produção Blindados" and "JSW_PB - Produção Blindados[Short text]" !~ Cancelado',
+               
             },
         }
 
