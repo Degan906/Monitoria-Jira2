@@ -454,7 +454,7 @@ else:
     brazil_tz = timezone('America/Sao_Paulo')  # Define o fuso horário de Brasília
     current_time = datetime.now(brazil_tz).strftime('%d/%m/%Y %H:%M:%S')  # Obtém a data e hora no fuso horário correto
     st.markdown(
-        f"<div class='footer'>Última atualização: {current_time}</div>",
+        f"<div class='footer'>Última atualização: {current_time} Versão 4.1</div>",
         unsafe_allow_html=True,
     )
 
