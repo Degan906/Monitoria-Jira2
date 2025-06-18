@@ -101,7 +101,7 @@ def load_credentials():
                 return json.load(f)
         except:
             return {
-                "henrique.degan": "12345",
+                "henrique.degan": "123456",
                 "vinicius.herrera": "12345",
                 "dante.labate": "12345",
                 "marcelo.lopes": "Carbon@25",
