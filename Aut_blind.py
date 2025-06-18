@@ -101,7 +101,7 @@ def load_credentials():
                 return json.load(f)
         except:
             return {
-                "henrique.degan": "123456",
+                "henrique.degan": "12345",
                 "vinicius.herrera": "12345",
                 "dante.labate": "12345",
                 "marcelo.lopes": "Carbon@25",
@@ -110,9 +110,11 @@ def load_credentials():
     else:
         # Credenciais padrão
         default_credentials = {
-            "henrique.degan": "12345",
-            "vinicius.herrera": "12345",
-            "dante.labate": "12345"
+                "henrique.degan": "12345",
+                "vinicius.herrera": "12345",
+                "dante.labate": "12345",
+                "marcelo.lopes": "Carbon@25",
+                "elizabeth.galoni": "Carbon@25"
         }
         # Salva as credenciais padrão
         save_credentials(default_credentials)
