@@ -108,6 +108,25 @@ card_links = {
 # Configuração da página
 st.set_page_config(page_title="Monitoria", layout="wide")
 
+st.markdown(
+    """
+    <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+ 
+        .block-container {
+            padding-top: 0rem !important;
+            padding-bottom: 1rem !important;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 # CSS para tooltips e animações
 st.markdown("""
 <style>
